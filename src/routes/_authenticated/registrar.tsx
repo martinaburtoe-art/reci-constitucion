@@ -91,7 +91,7 @@ function Registrar() {
               {it && it.n > 0 && (
                 <div className="mt-2 flex gap-1">
                   {(Object.keys(SIZE_LABEL) as Size[]).map((sz) => (
-                    <button key={sz} onClick={() => setItems((s) => ({ ...s, [m.id]: { ...s[m.id], size: sz } }))}
+                    <button key={sz} onClick={() => setItems((s) => ({ ...s, [m.id]: { n: s[m.id]?.n ?? 0, size: sz } }))}
                       className={`flex-1 rounded-lg py-1 text-xs ${it.size === sz ? "bg-leaf text-primary-foreground" : "bg-secondary"}`}>
                       {SIZE_LABEL[sz]}
                     </button>
