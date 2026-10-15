@@ -46,7 +46,7 @@ function AuthPage() {
     <div className="mx-auto flex min-h-[100dvh] max-w-md flex-col justify-center gap-6 p-6">
       <Reci message={`¡Hola! Soy Reci. ${mode === "in" ? "Ingresa" : "Crea tu cuenta"} para sumar puntos reciclando.`} />
       <h1 className="font-display text-3xl font-bold text-leaf-dark">{APP_NAME}</h1>
-      <Button variant="outline" onClick={() => lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/perfil" })}>
+      <Button variant="outline" onClick={() => lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin })}>
         Continuar con Google
       </Button>
       <form onSubmit={submit} className="space-y-3">
