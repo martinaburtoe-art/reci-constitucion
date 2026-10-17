@@ -7,3 +7,9 @@
 - [ ] Calendario de retiro
 - [ ] Panel admin (CSV/GeoJSON, coordenadas, estadísticas)
 - [ ] Acerca de / Impacto, modo sin conexión, README del catastro
+- [ ] Ranking con alias y participación voluntaria
+- [ ] Imagen de impacto e insignias para compartir
+- [ ] Rachas y recordatorios
+- [ ] Cámara de reciclaje con IA
+- [ ] Metas por material
+- [ ] Propuestas de horario, materiales y GPS en terreno
