@@ -100,8 +100,8 @@ function Onboarding({ id, name, onDone }: { id: string; name: string; onDone: ()
   }
   return (
     <div className="mx-auto flex min-h-[100dvh] max-w-md flex-col justify-center gap-6 p-6">
-      <Reci key={step} message={steps[step].msg} />
-      {steps[step].body}
+      <Reci key={step} message={steps[step]!.msg} />
+      {steps[step]!.body}
       <Button onClick={next}>{step < steps.length - 1 ? "Siguiente" : "¡Empezar!"}</Button>
     </div>
   );

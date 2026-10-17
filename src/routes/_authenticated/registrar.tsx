@@ -13,7 +13,7 @@ type Size = "pequeno" | "mediano" | "grande";
 const SIZE_LABEL: Record<Size, string> = { pequeno: "Pequeño", mediano: "Mediano", grande: "Grande" };
 
 export const Route = createFileRoute("/_authenticated/registrar")({
-  validateSearch: (s: Record<string, unknown>) => ({ punto: typeof s.punto === "string" ? s.punto : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({ punto: typeof s['punto'] === "string" ? (s['punto'] as string) : undefined }),
   head: () => ({ meta: [{ title: `Registrar reciclaje · ${APP_NAME}` }] }),
   component: Registrar,
 });
@@ -50,13 +50,13 @@ function Registrar() {
     setItems((s) => ({ ...s, [id]: { size: s[id]?.size ?? "mediano", n: Math.max(0, (s[id]?.n ?? 0) + d) } }));
 
   async function save() {
-    if (!lines.length) return toast.error("Agrega al menos un material.");
+    if (!lines.length) { toast.error("Agrega al menos un material."); return; }
     setBusy(true);
     const { data: log, error } = await supabase
       .from("recycling_logs")
       .insert({ user_id: user.id, point_id: pointId || null, kg_total: kg, co2_total: co2, puntos })
       .select("id").single();
-    if (error || !log) { setBusy(false); return toast.error("No se pudo guardar."); }
+    if (error || !log) { setBusy(false); toast.error("No se pudo guardar."); return; }
     await supabase.from("recycling_log_items").insert(
       lines.map((l) => ({ log_id: log.id, material_id: l.id, tamano: l.size, cantidad: l.n, kg: l.kg })),
     );
