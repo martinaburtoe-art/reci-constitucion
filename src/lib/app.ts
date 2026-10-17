@@ -1,4 +1,4 @@
-export const APP_NAME = "ReciCoñi";
+export const APP_NAME = "ReciConti";
 export const MAP_CENTER: [number, number] = [-35.3333, -72.4167];
 export const MAP_ZOOM = 14;
 

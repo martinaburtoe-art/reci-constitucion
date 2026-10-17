@@ -80,7 +80,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ReciCoñi" },
+      { title: "ReciConti" },
       { name: "description", content: "Reciclaje en Constitución, Maule." },
       { name: "theme-color", content: "#2E9D6A" },
       { property: "og:type", content: "website" },

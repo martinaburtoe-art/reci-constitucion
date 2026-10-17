@@ -1,4 +1,4 @@
-# ReciCoñi roadmap
+# ReciConti roadmap
 - [x] Esquema y datos semilla
 - [x] Mapa con puntos y filtro por material
 - [x] Ingreso (correo y Google), onboarding con Reci, perfil
