@@ -116,6 +116,32 @@ export type Database = {
         }
         Relationships: []
       }
+      material_goals: {
+        Row: {
+          kg: number
+          material_id: string
+          user_id: string
+        }
+        Insert: {
+          kg?: number
+          material_id: string
+          user_id: string
+        }
+        Update: {
+          kg?: number
+          material_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "material_goals_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       materials: {
         Row: {
           co2_por_kg: number
@@ -191,6 +217,53 @@ export type Database = {
           },
         ]
       }
+      point_suggestions: {
+        Row: {
+          created_at: string
+          estado: string
+          horario: string | null
+          id: string
+          lat: number | null
+          lng: number | null
+          materiales: string[] | null
+          nota: string
+          point_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          estado?: string
+          horario?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          materiales?: string[] | null
+          nota?: string
+          point_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          estado?: string
+          horario?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          materiales?: string[] | null
+          nota?: string
+          point_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "point_suggestions_point_id_fkey"
+            columns: ["point_id"]
+            isOneToOne: false
+            referencedRelation: "collection_points"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -200,6 +273,8 @@ export type Database = {
           monthly_goal_kg: number
           onboarding_done: boolean
           points: number
+          public_alias: string | null
+          ranking_opt_in: boolean
           sector: string | null
         }
         Insert: {
@@ -210,6 +285,8 @@ export type Database = {
           monthly_goal_kg?: number
           onboarding_done?: boolean
           points?: number
+          public_alias?: string | null
+          ranking_opt_in?: boolean
           sector?: string | null
         }
         Update: {
@@ -220,6 +297,8 @@ export type Database = {
           monthly_goal_kg?: number
           onboarding_done?: boolean
           points?: number
+          public_alias?: string | null
+          ranking_opt_in?: boolean
           sector?: string | null
         }
         Relationships: []
@@ -268,6 +347,7 @@ export type Database = {
       }
       recycling_logs: {
         Row: {
+          client_id: string | null
           co2_total: number
           created_at: string
           foto_url: string | null
@@ -278,6 +358,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          client_id?: string | null
           co2_total?: number
           created_at?: string
           foto_url?: string | null
@@ -288,6 +369,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          client_id?: string | null
           co2_total?: number
           created_at?: string
           foto_url?: string | null
@@ -483,6 +565,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      community_ranking: {
+        Args: { _sector?: string }
+        Returns: {
+          alias: string
+          kg: number
+          sector: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -495,8 +585,16 @@ export type Database = {
         Args: { _lat: number; _lng: number; _point: string }
         Returns: undefined
       }
+      record_recycling: {
+        Args: { _client: string; _items: Json; _point: string }
+        Returns: string
+      }
       report_fill_level: {
         Args: { _level: number; _point: string }
+        Returns: undefined
+      }
+      review_suggestion: {
+        Args: { _approve: boolean; _id: string }
         Returns: undefined
       }
       track_report: {
