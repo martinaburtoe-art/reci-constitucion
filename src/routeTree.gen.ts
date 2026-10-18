@@ -12,6 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CalendarioRouteImport } from './routes/calendario'
+import { Route as DenunciarRouteImport } from './routes/denunciar'
+import { Route as ImpactoRouteImport } from './routes/impacto'
+import { Route as RankingRouteImport } from './routes/ranking'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedCamaraRouteImport } from './routes/_authenticated/camara'
+import { Route as AuthenticatedNuevaDenunciaRouteImport } from './routes/_authenticated/nueva-denuncia'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedRegistrarRouteImport } from './routes/_authenticated/registrar'
 
@@ -29,6 +36,42 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CalendarioRoute = CalendarioRouteImport.update({
+  id: '/calendario',
+  path: '/calendario',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DenunciarRoute = DenunciarRouteImport.update({
+  id: '/denunciar',
+  path: '/denunciar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ImpactoRoute = ImpactoRouteImport.update({
+  id: '/impacto',
+  path: '/impacto',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RankingRoute = RankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCamaraRoute = AuthenticatedCamaraRouteImport.update({
+  id: '/camara',
+  path: '/camara',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedNuevaDenunciaRoute =
+  AuthenticatedNuevaDenunciaRouteImport.update({
+    id: '/nueva-denuncia',
+    path: '/nueva-denuncia',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -43,12 +86,26 @@ const AuthenticatedRegistrarRoute = AuthenticatedRegistrarRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/calendario': typeof CalendarioRoute
+  '/denunciar': typeof DenunciarRoute
+  '/impacto': typeof ImpactoRoute
+  '/ranking': typeof RankingRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/camara': typeof AuthenticatedCamaraRoute
+  '/nueva-denuncia': typeof AuthenticatedNuevaDenunciaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/registrar': typeof AuthenticatedRegistrarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/calendario': typeof CalendarioRoute
+  '/denunciar': typeof DenunciarRoute
+  '/impacto': typeof ImpactoRoute
+  '/ranking': typeof RankingRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/camara': typeof AuthenticatedCamaraRoute
+  '/nueva-denuncia': typeof AuthenticatedNuevaDenunciaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/registrar': typeof AuthenticatedRegistrarRoute
 }
@@ -57,19 +114,55 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/calendario': typeof CalendarioRoute
+  '/denunciar': typeof DenunciarRoute
+  '/impacto': typeof ImpactoRoute
+  '/ranking': typeof RankingRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/camara': typeof AuthenticatedCamaraRoute
+  '/_authenticated/nueva-denuncia': typeof AuthenticatedNuevaDenunciaRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/registrar': typeof AuthenticatedRegistrarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/perfil' | '/registrar'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/calendario'
+    | '/denunciar'
+    | '/impacto'
+    | '/ranking'
+    | '/admin'
+    | '/camara'
+    | '/nueva-denuncia'
+    | '/perfil'
+    | '/registrar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/perfil' | '/registrar'
+  to:
+    | '/'
+    | '/auth'
+    | '/calendario'
+    | '/denunciar'
+    | '/impacto'
+    | '/ranking'
+    | '/admin'
+    | '/camara'
+    | '/nueva-denuncia'
+    | '/perfil'
+    | '/registrar'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/calendario'
+    | '/denunciar'
+    | '/impacto'
+    | '/ranking'
+    | '/_authenticated/admin'
+    | '/_authenticated/camara'
+    | '/_authenticated/nueva-denuncia'
     | '/_authenticated/perfil'
     | '/_authenticated/registrar'
   fileRoutesById: FileRoutesById
@@ -78,6 +171,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CalendarioRoute: typeof CalendarioRoute
+  DenunciarRoute: typeof DenunciarRoute
+  ImpactoRoute: typeof ImpactoRoute
+  RankingRoute: typeof RankingRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -103,6 +200,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/calendario': {
+      id: '/calendario'
+      path: '/calendario'
+      fullPath: '/calendario'
+      preLoaderRoute: typeof CalendarioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/denunciar': {
+      id: '/denunciar'
+      path: '/denunciar'
+      fullPath: '/denunciar'
+      preLoaderRoute: typeof DenunciarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/impacto': {
+      id: '/impacto'
+      path: '/impacto'
+      fullPath: '/impacto'
+      preLoaderRoute: typeof ImpactoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ranking': {
+      id: '/ranking'
+      path: '/ranking'
+      fullPath: '/ranking'
+      preLoaderRoute: typeof RankingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/camara': {
+      id: '/_authenticated/camara'
+      path: '/camara'
+      fullPath: '/camara'
+      preLoaderRoute: typeof AuthenticatedCamaraRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/nueva-denuncia': {
+      id: '/_authenticated/nueva-denuncia'
+      path: '/nueva-denuncia'
+      fullPath: '/nueva-denuncia'
+      preLoaderRoute: typeof AuthenticatedNuevaDenunciaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/perfil': {
       id: '/_authenticated/perfil'
       path: '/perfil'
@@ -121,11 +267,17 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedCamaraRoute: typeof AuthenticatedCamaraRoute
+  AuthenticatedNuevaDenunciaRoute: typeof AuthenticatedNuevaDenunciaRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedRegistrarRoute: typeof AuthenticatedRegistrarRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedCamaraRoute: AuthenticatedCamaraRoute,
+  AuthenticatedNuevaDenunciaRoute: AuthenticatedNuevaDenunciaRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedRegistrarRoute: AuthenticatedRegistrarRoute,
 }
@@ -137,6 +289,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  CalendarioRoute: CalendarioRoute,
+  DenunciarRoute: DenunciarRoute,
+  ImpactoRoute: ImpactoRoute,
+  RankingRoute: RankingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

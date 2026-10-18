@@ -13,6 +13,7 @@ export type PointLite = {
   nivel_llenado: number;
   verificado: boolean;
   materiales: string[];
+  fuente?: string | null;
 };
 
 export const ESTADO_LABEL = { activo: "Activo", lleno: "Lleno", cerrado: "Cerrado" } as const;

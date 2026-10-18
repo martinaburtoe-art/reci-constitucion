@@ -1,9 +1,13 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster";
+import { Button } from "@/components/ui/button";
+import { LocateFixed } from "lucide-react";
+import { toast } from "sonner";
 import { MAP_CENTER, MAP_ZOOM, type PointLite } from "@/lib/app";
 
-const COLORS = { activo: "#2E9D6A", lleno: "#E3A21A", cerrado: "#8C9AA6" };
+const COLORS = { activo: "primary", lleno: "warning", cerrado: "muted-foreground" };
 
 export default function PointsMap({
   points,
@@ -23,7 +27,7 @@ export default function PointsMap({
       attribution: "© OpenStreetMap",
       maxZoom: 19,
     }).addTo(map.current);
-    layer.current = L.layerGroup().addTo(map.current);
+    layer.current = L.markerClusterGroup({iconCreateFunction: c => L.divIcon({html: String(c.getChildCount()),className:"reci-cluster",iconSize:[40,40]})}).addTo(map.current);
     return () => {
       map.current?.remove();
       map.current = null;
@@ -31,18 +35,19 @@ export default function PointsMap({
   }, []);
 
   useEffect(() => {
-    if (!layer.current) return;
-    layer.current.clearLayers();
+    const currentLayer = layer.current;
+    if (!currentLayer) return;
+    currentLayer.clearLayers();
     points.forEach((p) => {
       const icon = L.divIcon({
         className: "",
-        html: `<div style="width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${COLORS[p.estado]};border:3px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.25)"></div>`,
+        html: `<div class="reci-pin ${p.verificado ? "" : "unverified"}" style="background:var(--${COLORS[p.estado]})"><span></span></div>`,
         iconSize: [34, 34],
         iconAnchor: [17, 34],
       });
-      L.marker([p.lat, p.lng], { icon }).on("click", () => onSelect(p)).addTo(layer.current!);
+      L.marker([p.lat, p.lng], { icon }).on("click", () => onSelect(p)).addTo(currentLayer);
     });
   }, [points, onSelect]);
 
-  return <div ref={el} className="h-full w-full" />;
+  return <><div ref={el} className="h-full w-full" /><Button variant="secondary" size="icon" className="absolute left-4 bottom-20 z-[1000] shadow-float" aria-label="Cerca de mí" onClick={() => { navigator.geolocation.getCurrentPosition(p => map.current?.setView([p.coords.latitude,p.coords.longitude],16), () => toast.error("Activa el permiso de ubicación."), {enableHighAccuracy:true}); }}><LocateFixed /></Button></>;
 }

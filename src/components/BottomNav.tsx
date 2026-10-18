@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { Map, PlusCircle, User } from "lucide-react";
+import { Map, PlusCircle, User, CalendarDays, Flag } from "lucide-react";
 
 const items = [
   { to: "/", label: "Mapa", Icon: Map },
   { to: "/registrar", label: "Reciclar", Icon: PlusCircle },
-  { to: "/perfil", label: "Mi perfil", Icon: User },
+  { to: "/calendario", label: "Calendario", Icon: CalendarDays },
+  { to: "/denunciar", label: "Denunciar", Icon: Flag },
+  { to: "/perfil", label: "Perfil", Icon: User },
 ] as const;
 
 export function BottomNav() {
