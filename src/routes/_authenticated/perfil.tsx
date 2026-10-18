@@ -7,10 +7,13 @@ import { BottomNav } from "@/components/BottomNav";
 import { Reci } from "@/components/Reci";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ProfileExtras } from "@/components/ProfileExtras";
+import { pageHead } from "@/lib/features";
+import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 
 export const Route = createFileRoute("/_authenticated/perfil")({
-  head: () => ({ meta: [{ title: `Mi perfil · ${APP_NAME}` }] }),
+  head: () => pageHead("Mi perfil", "Metas, rachas, insignias e impacto de reciclaje en ReciConti."),
   component: Perfil,
 });
 
@@ -26,10 +29,10 @@ function Perfil() {
   const { data: logs = [] } = useQuery({
     queryKey: ["logs", user.id],
     queryFn: async () =>
-      (await supabase.from("recycling_logs").select("id,kg_total,co2_total,puntos,created_at").order("created_at", { ascending: false })).data ?? [],
+      (await supabase.from("recycling_logs").select("id,kg_total,co2_total,puntos,created_at").eq("user_id", user.id).order("created_at", { ascending: false })).data ?? [],
   });
 
-  if (!profile) return null;
+  if (!profile) return <div className="p-5"><p>Cargando tu perfil…</p><BottomNav /></div>;
   if (!profile.onboarding_done) return <Onboarding id={user.id} name={profile.display_name ?? ""} onDone={() => qc.invalidateQueries()} />;
 
   const month = new Date().toISOString().slice(0, 7);
@@ -50,6 +53,7 @@ function Perfil() {
         <Stat label="kg total" value={kgTotal.toFixed(1)} />
         <Stat label="kg CO₂" value={co2.toFixed(1)} />
       </div>
+      <ProfileExtras user={user.id} alias={profile.display_name ?? "Vecino/a"} logs={logs} />
       <h2 className="font-display text-xl font-bold">Historial</h2>
       {logs.length === 0 ? (
         <Link to="/registrar" search={{ punto: undefined }} className="block rounded-2xl bg-secondary p-4 text-center text-sm">Aún no registras nada. ¡Parte ahora!</Link>
@@ -83,9 +87,11 @@ function Onboarding({ id, name, onDone }: { id: string; name: string; onDone: ()
     { msg: "¡Hola! Soy Reci 🌱. Te ayudo a reciclar en Constitución. ¿Cómo te llamas?", body: <Input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Tu nombre" /> },
     { msg: `Buena, ${nombre || "vecino/a"}. ¿En qué sector vives?`, body: (
       <div className="grid grid-cols-2 gap-2">{SECTORES.map((s) => (
-        <button key={s} onClick={() => setSector(s)} className={`rounded-xl p-2 text-sm ${sector === s ? "bg-primary text-primary-foreground" : "bg-secondary"}`}>{s}</button>
+        <Button variant="secondary" key={s} onClick={() => setSector(s)} className={`rounded-xl p-2 text-sm ${sector === s ? "bg-primary text-primary-foreground" : "bg-secondary"}`}>{s}</Button>
       ))}</div>
     ) },
+    { msg: "Los puntos por confirmar necesitan una revisión en terreno. Nunca asumas que una ubicación es oficial.", body: <p className="text-sm text-muted-foreground">Puedes enviar tu GPS desde la ficha del punto. La administración revisará la propuesta.</p> },
+    { msg: "Limpio, seco y separado: cada material tiene su preparación.", body: <p className="text-sm text-muted-foreground">Mantén fuera pilas, aceite y aparatos electrónicos de los contenedores de envases.</p> },
     { msg: "¿Cuántos kilos quieres reciclar al mes?", body: (
       <div className="flex items-center gap-3">
         <input type="range" min={1} max={30} value={meta} onChange={(e) => setMeta(+e.target.value)} className="flex-1" />
@@ -95,13 +101,14 @@ function Onboarding({ id, name, onDone }: { id: string; name: string; onDone: ()
   ];
   async function next() {
     if (step < steps.length - 1) return setStep(step + 1);
-    await supabase.from("profiles").update({ display_name: nombre, sector, monthly_goal_kg: meta, onboarding_done: true }).eq("id", id);
+    const { error } = await supabase.from("profiles").update({ display_name: nombre, sector, monthly_goal_kg: meta, onboarding_done: true }).eq("id", id);
+    if (error) { toast.error(error.message); return; }
     onDone();
   }
   return (
     <div className="mx-auto flex min-h-[100dvh] max-w-md flex-col justify-center gap-6 p-6">
-      <Reci key={step} message={steps[step]!.msg} />
-      {steps[step]!.body}
+      <Reci key={step} message={steps[step]?.msg} />
+      {steps[step]?.body}
       <Button onClick={next}>{step < steps.length - 1 ? "Siguiente" : "¡Empezar!"}</Button>
     </div>
   );
