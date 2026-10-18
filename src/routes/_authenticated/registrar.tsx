@@ -4,6 +4,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Minus, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { pageHead } from "@/lib/features";
+import { enqueue } from "@/lib/offline";
+import confetti from "canvas-confetti";
 import { APP_NAME } from "@/lib/app";
 import { BottomNav } from "@/components/BottomNav";
 import { Reci } from "@/components/Reci";
@@ -14,7 +17,7 @@ const SIZE_LABEL: Record<Size, string> = { pequeno: "Pequeño", mediano: "Median
 
 export const Route = createFileRoute("/_authenticated/registrar")({
   validateSearch: (s: Record<string, unknown>) => ({ punto: typeof s['punto'] === "string" ? (s['punto'] as string) : undefined }),
-  head: () => ({ meta: [{ title: `Registrar reciclaje · ${APP_NAME}` }] }),
+  head: () => pageHead("Registrar reciclaje", "Registra materiales y suma tu impacto en Constitución."),
   component: Registrar,
 });
 
@@ -37,33 +40,34 @@ function Registrar() {
   });
 
   const lines = Object.entries(items).filter(([, v]) => v.n > 0).map(([id, v]) => {
-    const m = materials.find((x) => x.id === id)!;
+    const m = materials.find((x) => x.id === id);
+    if (!m) return null;
     const kgEach = Number(v.size === "pequeno" ? m.kg_pequeno : v.size === "grande" ? m.kg_grande : m.kg_mediano);
     const kg = kgEach * v.n;
     return { id, ...v, kg, co2: kg * Number(m.co2_por_kg) };
   });
-  const kg = lines.reduce((a, l) => a + l.kg, 0);
-  const co2 = lines.reduce((a, l) => a + l.co2, 0);
-  const puntos = Math.min(500, Math.round(kg * 10) + lines.length * 2);
+  const validLines = lines.filter((l): l is NonNullable<typeof l> => l !== null);
+  const kg = validLines.reduce((a, l) => a + l.kg, 0);
+  const co2 = validLines.reduce((a, l) => a + l.co2, 0);
+  const puntos = Math.min(500, Math.round(kg * 10) + validLines.length * 2);
 
   const change = (id: string, d: number) =>
     setItems((s) => ({ ...s, [id]: { size: s[id]?.size ?? "mediano", n: Math.max(0, (s[id]?.n ?? 0) + d) } }));
 
   async function save() {
-    if (!lines.length) { toast.error("Agrega al menos un material."); return; }
+    if (!validLines.length) { toast.error("Agrega al menos un material."); return; }
+    const entry = {client:crypto.randomUUID(),user:user.id,point:pointId||null,items:validLines.map(l=>({id:l.id,n:l.n,size:l.size}))};
+    if(!navigator.onLine){ enqueue(entry); toast.success("Guardado en este dispositivo. Se enviará cuando vuelva la señal."); setItems({}); return; }
     setBusy(true);
-    const { data: log, error } = await supabase
-      .from("recycling_logs")
-      .insert({ user_id: user.id, point_id: pointId || null, kg_total: kg, co2_total: co2, puntos })
-      .select("id").single();
-    if (error || !log) { setBusy(false); toast.error("No se pudo guardar."); return; }
-    await supabase.from("recycling_log_items").insert(
-      lines.map((l) => ({ log_id: log.id, material_id: l.id, tamano: l.size, cantidad: l.n, kg: l.kg })),
-    );
-    setBusy(false);
-    qc.invalidateQueries();
-    toast.success(`¡Bien! Sumaste ${puntos} puntos 🌱`);
-    nav({ to: "/perfil" });
+    try {
+      const {error} = await supabase.rpc("record_recycling", {_client:entry.client,_point:entry.point??undefined,_items:entry.items});
+      if(error) throw error;
+      qc.invalidateQueries();
+      if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches) confetti({particleCount:65,spread:65});
+      toast.success(`¡Bien! Sumaste ${puntos} puntos 🌱`);
+      nav({to:"/perfil"});
+    } catch(e) { toast.error(e instanceof Error ? e.message : "No se pudo guardar. Intenta nuevamente."); }
+    finally { setBusy(false); }
   }
 
   return (
@@ -83,18 +87,18 @@ function Registrar() {
                   <span className="h-3 w-3 rounded-full" style={{ background: m.color }} />{m.nombre}
                 </span>
                 <div className="flex items-center gap-2">
-                  <button aria-label="Quitar" className="rounded-full bg-secondary p-1" onClick={() => change(m.id, -1)}><Minus className="h-4 w-4" /></button>
+                  <Button variant="secondary" size="icon" aria-label={`Quitar ${m.nombre}`} className="rounded-full bg-secondary p-1" onClick={() => change(m.id, -1)}><Minus className="h-4 w-4" /></Button>
                   <span className="w-6 text-center">{it?.n ?? 0}</span>
-                  <button aria-label="Agregar" className="rounded-full bg-primary p-1 text-primary-foreground" onClick={() => change(m.id, 1)}><Plus className="h-4 w-4" /></button>
+                  <Button size="icon" aria-label={`Agregar ${m.nombre}`} className="rounded-full bg-primary p-1 text-primary-foreground" onClick={() => change(m.id, 1)}><Plus className="h-4 w-4" /></Button>
                 </div>
               </div>
               {it && it.n > 0 && (
                 <div className="mt-2 flex gap-1">
                   {(Object.keys(SIZE_LABEL) as Size[]).map((sz) => (
-                    <button key={sz} onClick={() => setItems((s) => ({ ...s, [m.id]: { n: s[m.id]?.n ?? 0, size: sz } }))}
+                    <Button variant="secondary" key={sz} onClick={() => setItems((s) => ({ ...s, [m.id]: { n: s[m.id]?.n ?? 0, size: sz } }))}
                       className={`flex-1 rounded-lg py-1 text-xs ${it.size === sz ? "bg-leaf text-primary-foreground" : "bg-secondary"}`}>
                       {SIZE_LABEL[sz]}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               )}

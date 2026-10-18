@@ -4,6 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { APP_NAME, ESTADO_LABEL, type PointLite } from "@/lib/app";
 import { BottomNav } from "@/components/BottomNav";
+import { PointSuggestion } from "@/components/PointSuggestion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { X, Clock, MapPin } from "lucide-react";
 
 const PointsMap = lazy(() => import("@/components/PointsMap"));
@@ -25,7 +28,7 @@ export const Route = createFileRoute("/")({
 async function fetchPoints(): Promise<PointLite[]> {
   const { data, error } = await supabase
     .from("collection_points")
-    .select("id,nombre,direccion,lat,lng,horario,estado,nivel_llenado,verificado,point_materials(material_id)");
+    .select("id,nombre,direccion,lat,lng,horario,estado,nivel_llenado,verificado,fuente,point_materials(material_id)");
   if (error) throw error;
   return (data ?? []).map((p: any) => ({ ...p, materiales: p.point_materials.map((m: any) => m.material_id) }));
 }
@@ -36,9 +39,10 @@ function Index() {
     queryKey: ["materials"],
     queryFn: async () => (await supabase.from("materials").select("id,nombre,color").order("orden")).data ?? [],
   });
+  const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string | null>(null);
   const [sel, setSel] = useState<PointLite | null>(null);
-  const shown = useMemo(() => (filter ? points.filter((p) => p.materiales.includes(filter)) : points), [points, filter]);
+  const shown = useMemo(() => points.filter(p => (!filter || p.materiales.includes(filter)) && `${p.nombre} ${p.direccion ?? ""}`.toLowerCase().includes(search.toLowerCase())), [points, filter, search]);
   const onSelect = useCallback((p: PointLite) => setSel(p), []);
   const matName = (id: string) => materials.find((m) => m.id === id)?.nombre ?? id;
 
@@ -53,6 +57,7 @@ function Index() {
       <header className="absolute inset-x-0 top-0 z-[1000] p-3">
         <div className="mx-auto max-w-md rounded-2xl bg-card/95 p-3 shadow-float backdrop-blur">
           <h1 className="font-display text-2xl font-bold text-leaf-dark">{APP_NAME}</h1>
+          <Input className="mt-2" aria-label="Buscar punto" placeholder="Buscar punto o dirección" value={search} onChange={e=>setSearch(e.target.value)} />
           <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
             <Chip active={!filter} onClick={() => setFilter(null)}>Todos</Chip>
             {materials.map((m) => (
@@ -63,17 +68,18 @@ function Index() {
       </header>
 
       {sel && (
-        <div className="absolute inset-x-0 bottom-16 z-[1000] p-3">
+        <div className="absolute inset-x-0 bottom-16 max-h-[65dvh] overflow-y-auto z-[1000] p-3">
           <div className="mx-auto max-w-md rounded-2xl bg-card p-4 shadow-float">
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="font-display text-xl font-bold">{sel.nombre}</h2>
                 <p className="text-sm text-muted-foreground">
-                  {ESTADO_LABEL[sel.estado]} · {sel.nivel_llenado}% lleno {sel.verificado ? "· Verificado" : "· Referencial"}
+                  {ESTADO_LABEL[sel.estado]} · {sel.nivel_llenado}% lleno {sel.verificado ? "· Verificado" : "· Ubicación por confirmar"}
                 </p>
               </div>
-              <button onClick={() => setSel(null)} aria-label="Cerrar"><X className="h-5 w-5" /></button>
+              <Button variant="ghost" size="icon" onClick={() => setSel(null)} aria-label="Cerrar"><X className="h-5 w-5" /></Button>
             </div>
+            <p className="mt-2 text-xs text-muted-foreground">Fuente: {sel.fuente ?? "Sin fuente oficial — no verificado"}</p>
             {sel.direccion && <p className="mt-2 flex gap-1 text-sm"><MapPin className="h-4 w-4" />{sel.direccion}</p>}
             {sel.horario && <p className="mt-1 flex gap-1 text-sm"><Clock className="h-4 w-4" />{sel.horario}</p>}
             <div className="mt-2 flex flex-wrap gap-1">
@@ -91,6 +97,7 @@ function Index() {
                 Reciclé aquí
               </Link>
             </div>
+            <PointSuggestion point={sel.id} materials={materials} />
           </div>
         </div>
       )}
@@ -101,9 +108,10 @@ function Index() {
 
 function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <button
+    <Button
+      variant={active ? "default" : "secondary"}
       onClick={onClick}
       className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${active ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}
-    >{children}</button>
+    >{children}</Button>
   );
 }
