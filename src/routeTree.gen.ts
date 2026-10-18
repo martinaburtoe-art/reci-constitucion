@@ -17,6 +17,7 @@ import { Route as DenunciarRouteImport } from './routes/denunciar'
 import { Route as ImpactoRouteImport } from './routes/impacto'
 import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedCamaraRouteImport } from './routes/_authenticated/camara'
 import { Route as AuthenticatedNuevaDenunciaRouteImport } from './routes/_authenticated/nueva-denuncia'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedRegistrarRouteImport } from './routes/_authenticated/registrar'
@@ -60,6 +61,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCamaraRoute = AuthenticatedCamaraRouteImport.update({
+  id: '/camara',
+  path: '/camara',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedNuevaDenunciaRoute =
   AuthenticatedNuevaDenunciaRouteImport.update({
     id: '/nueva-denuncia',
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/impacto': typeof ImpactoRoute
   '/ranking': typeof RankingRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/camara': typeof AuthenticatedCamaraRoute
   '/nueva-denuncia': typeof AuthenticatedNuevaDenunciaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/registrar': typeof AuthenticatedRegistrarRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/impacto': typeof ImpactoRoute
   '/ranking': typeof RankingRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/camara': typeof AuthenticatedCamaraRoute
   '/nueva-denuncia': typeof AuthenticatedNuevaDenunciaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/registrar': typeof AuthenticatedRegistrarRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/impacto': typeof ImpactoRoute
   '/ranking': typeof RankingRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/camara': typeof AuthenticatedCamaraRoute
   '/_authenticated/nueva-denuncia': typeof AuthenticatedNuevaDenunciaRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/registrar': typeof AuthenticatedRegistrarRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/impacto'
     | '/ranking'
     | '/admin'
+    | '/camara'
     | '/nueva-denuncia'
     | '/perfil'
     | '/registrar'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/impacto'
     | '/ranking'
     | '/admin'
+    | '/camara'
     | '/nueva-denuncia'
     | '/perfil'
     | '/registrar'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/impacto'
     | '/ranking'
     | '/_authenticated/admin'
+    | '/_authenticated/camara'
     | '/_authenticated/nueva-denuncia'
     | '/_authenticated/perfil'
     | '/_authenticated/registrar'
@@ -223,6 +235,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/camara': {
+      id: '/_authenticated/camara'
+      path: '/camara'
+      fullPath: '/camara'
+      preLoaderRoute: typeof AuthenticatedCamaraRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/nueva-denuncia': {
       id: '/_authenticated/nueva-denuncia'
       path: '/nueva-denuncia'
@@ -249,6 +268,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedCamaraRoute: typeof AuthenticatedCamaraRoute
   AuthenticatedNuevaDenunciaRoute: typeof AuthenticatedNuevaDenunciaRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedRegistrarRoute: typeof AuthenticatedRegistrarRoute
@@ -256,6 +276,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedCamaraRoute: AuthenticatedCamaraRoute,
   AuthenticatedNuevaDenunciaRoute: AuthenticatedNuevaDenunciaRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedRegistrarRoute: AuthenticatedRegistrarRoute,
