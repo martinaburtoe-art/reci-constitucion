@@ -1,0 +1,9 @@
+import {createFileRoute,Link} from '@tanstack/react-router';
+import {useQuery} from '@tanstack/react-query';
+import {useState} from 'react';
+import {Trophy} from 'lucide-react';
+import {supabase} from '@/integrations/supabase/client';
+import {Page} from '@/components/Page';
+import {pageHead} from '@/lib/features';
+export const Route=createFileRoute('/ranking')({head:()=>pageHead('Ranking comunal','Vecinos de Constitución que comparten voluntariamente su impacto mensual.'),component:Ranking});
+function Ranking(){const [sector,setSector]=useState('');const {data:rows=[],isLoading,isError}=useQuery({queryKey:['ranking'],queryFn:async()=>{const {data,error}=await supabase.rpc('community_ranking');if(error)throw error;return data}});return <Page title="Vecinos que suman"><div className="flex gap-3 items-center"><Trophy className="h-10 w-10 text-warning"/><p className="text-sm text-muted-foreground">Este mes · Constitución</p></div><select aria-label="Sector del ranking" className="w-full rounded-lg border bg-card p-3" value={sector} onChange={e=>setSector(e.target.value)}><option value="">Toda la comuna</option>{[...new Set(rows.map(r=>r.sector))].map(s=><option key={s} value={s}>{s||'Sin sector'}</option>)}</select>{isLoading&&<p>Cargando ranking…</p>}{isError&&<p>No pudimos cargar el ranking.</p>}{!isLoading&&!rows.length&&<p className="py-8 text-center text-muted-foreground">Aún no hay vecinos participando este mes 🌱</p>}<ol className="divide-y">{rows.filter(r=>!sector||r.sector===sector).map((r,i)=><li key={`${r.alias}-${i}`} className="flex items-center gap-4 py-4"><b className="text-xl text-primary">{i+1}</b><div className="flex-1"><b>{r.alias}</b><p className="text-xs text-muted-foreground">{r.sector}</p></div><b>{Number(r.kg).toFixed(1)} kg</b></li>)}</ol><Link to="/perfil" className="text-primary underline">Participar con mi alias desde el perfil</Link></Page>}
