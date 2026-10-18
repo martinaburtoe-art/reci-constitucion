@@ -1,0 +1,3 @@
+import {describe,it,expect} from 'vitest';
+import {coordinates,streak,reciMessage} from '@/lib/features';
+describe('Community rules',()=>{it('celebrates three consecutive weeks',()=>{const dates=['2026-10-05T12:00:00','2026-10-12T12:00:00','2026-10-19T12:00:00'];expect(streak(dates,new Date('2026-10-20T12:00:00'))).toBe(3)});it('reminds after two weeks without recycling',()=>{expect(reciMessage(['2026-10-01T12:00:00'],new Date('2026-10-20T12:00:00'))).toContain('dos semanas')});it('rejects invented or invalid coordinates',()=>{expect(coordinates(NaN,-72)).toBe(false);expect(coordinates(-95,-72)).toBe(false);expect(coordinates(-35.3333,-72.4167)).toBe(true)});});

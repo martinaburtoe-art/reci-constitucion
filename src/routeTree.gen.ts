@@ -16,6 +16,7 @@ import { Route as CalendarioRouteImport } from './routes/calendario'
 import { Route as DenunciarRouteImport } from './routes/denunciar'
 import { Route as ImpactoRouteImport } from './routes/impacto'
 import { Route as RankingRouteImport } from './routes/ranking'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedNuevaDenunciaRouteImport } from './routes/_authenticated/nueva-denuncia'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedRegistrarRouteImport } from './routes/_authenticated/registrar'
@@ -54,6 +55,11 @@ const RankingRoute = RankingRouteImport.update({
   path: '/ranking',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedNuevaDenunciaRoute =
   AuthenticatedNuevaDenunciaRouteImport.update({
     id: '/nueva-denuncia',
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/denunciar': typeof DenunciarRoute
   '/impacto': typeof ImpactoRoute
   '/ranking': typeof RankingRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/nueva-denuncia': typeof AuthenticatedNuevaDenunciaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/registrar': typeof AuthenticatedRegistrarRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/denunciar': typeof DenunciarRoute
   '/impacto': typeof ImpactoRoute
   '/ranking': typeof RankingRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/nueva-denuncia': typeof AuthenticatedNuevaDenunciaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/registrar': typeof AuthenticatedRegistrarRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/denunciar': typeof DenunciarRoute
   '/impacto': typeof ImpactoRoute
   '/ranking': typeof RankingRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/nueva-denuncia': typeof AuthenticatedNuevaDenunciaRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/registrar': typeof AuthenticatedRegistrarRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/denunciar'
     | '/impacto'
     | '/ranking'
+    | '/admin'
     | '/nueva-denuncia'
     | '/perfil'
     | '/registrar'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/denunciar'
     | '/impacto'
     | '/ranking'
+    | '/admin'
     | '/nueva-denuncia'
     | '/perfil'
     | '/registrar'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/denunciar'
     | '/impacto'
     | '/ranking'
+    | '/_authenticated/admin'
     | '/_authenticated/nueva-denuncia'
     | '/_authenticated/perfil'
     | '/_authenticated/registrar'
@@ -204,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RankingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/nueva-denuncia': {
       id: '/_authenticated/nueva-denuncia'
       path: '/nueva-denuncia'
@@ -229,12 +248,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedNuevaDenunciaRoute: typeof AuthenticatedNuevaDenunciaRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedRegistrarRoute: typeof AuthenticatedRegistrarRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedNuevaDenunciaRoute: AuthenticatedNuevaDenunciaRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedRegistrarRoute: AuthenticatedRegistrarRoute,
