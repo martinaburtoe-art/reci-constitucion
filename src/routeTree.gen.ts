@@ -22,6 +22,7 @@ import { Route as AuthenticatedNuevaDenunciaRouteImport } from './routes/_authen
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedRegistrarRouteImport } from './routes/_authenticated/registrar'
 import { Route as ApiPublicClassifyRouteImport } from './routes/api/public/classify'
+import { Route as ApiPublicRemindersRouteImport } from './routes/api/public/reminders'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -88,6 +89,11 @@ const ApiPublicClassifyRoute = ApiPublicClassifyRouteImport.update({
   path: '/api/public/classify',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicRemindersRoute = ApiPublicRemindersRouteImport.update({
+  id: '/api/public/reminders',
+  path: '/api/public/reminders',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/perfil': typeof AuthenticatedPerfilRoute
   '/registrar': typeof AuthenticatedRegistrarRoute
   '/api/public/classify': typeof ApiPublicClassifyRoute
+  '/api/public/reminders': typeof ApiPublicRemindersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/perfil': typeof AuthenticatedPerfilRoute
   '/registrar': typeof AuthenticatedRegistrarRoute
   '/api/public/classify': typeof ApiPublicClassifyRoute
+  '/api/public/reminders': typeof ApiPublicRemindersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/registrar': typeof AuthenticatedRegistrarRoute
   '/api/public/classify': typeof ApiPublicClassifyRoute
+  '/api/public/reminders': typeof ApiPublicRemindersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/registrar'
     | '/api/public/classify'
+    | '/api/public/reminders'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/registrar'
     | '/api/public/classify'
+    | '/api/public/reminders'
   id:
     | '__root__'
     | '/'
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/_authenticated/perfil'
     | '/_authenticated/registrar'
     | '/api/public/classify'
+    | '/api/public/reminders'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -188,6 +200,7 @@ export interface RootRouteChildren {
   ImpactoRoute: typeof ImpactoRoute
   RankingRoute: typeof RankingRoute
   ApiPublicClassifyRoute: typeof ApiPublicClassifyRoute
+  ApiPublicRemindersRoute: typeof ApiPublicRemindersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -283,6 +296,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicClassifyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/reminders': {
+      id: '/api/public/reminders'
+      path: '/api/public/reminders'
+      fullPath: '/api/public/reminders'
+      preLoaderRoute: typeof ApiPublicRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -314,6 +334,7 @@ const rootRouteChildren: RootRouteChildren = {
   ImpactoRoute: ImpactoRoute,
   RankingRoute: RankingRoute,
   ApiPublicClassifyRoute: ApiPublicClassifyRoute,
+  ApiPublicRemindersRoute: ApiPublicRemindersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
