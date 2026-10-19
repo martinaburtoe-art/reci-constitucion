@@ -1,5 +1,5 @@
 import {createServerFn} from '@tanstack/react-start';
 import {requireSupabaseAuth} from '@/integrations/supabase/auth-middleware';
 import {z} from 'zod';
-const point=z.object({nombre:z.string().min(1),direccion:z.string().nullable().optional(),lat:z.number().min(-90).max(90),lng:z.number().min(-180).max(180),fuente:z.string().min(1),verificado:z.boolean().default(false),horario:z.string().nullable().optional()});
+const point=z.object({nombre:z.string().min(1),direccion:z.string().nullable().optional(),lat:z.number().min(-90).max(90),lng:z.number().min(-180).max(180),fuente:z.string().min(1),verificado:z.literal(false).default(false),horario:z.string().nullable().optional()});
 export const importPoints=createServerFn({method:'POST'}).middleware([requireSupabaseAuth]).inputValidator((v)=>z.array(point).min(1).max(1000).parse(v)).handler(async({data,context})=>{const {data:allowed,error}=await context.supabase.rpc('has_role',{_user_id:context.userId,_role:'super_admin'});if(error||!allowed)throw new Error('Sin permiso para importar el catastro.');const {error:write}=await context.supabase.from('collection_points').insert(data.map(p=>({...p,direccion:p.direccion??null,horario:p.horario??null})));if(write)throw new Error(write.message);return {count:data.length}});
