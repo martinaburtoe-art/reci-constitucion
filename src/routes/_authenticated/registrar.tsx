@@ -60,7 +60,7 @@ function Registrar() {
     if(!navigator.onLine){ enqueue(entry); toast.success("Guardado en este dispositivo. Se enviará cuando vuelva la señal."); setItems({}); return; }
     setBusy(true);
     try {
-      const {error} = await supabase.rpc("record_recycling", {_client:entry.client,_point:entry.point??undefined,_items:entry.items});
+      const {error} = await supabase.rpc("record_recycling", {_client:entry.client,_point:entry.point as string,_items:entry.items});
       if(error) throw error;
       qc.invalidateQueries();
       if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches) confetti({particleCount:65,spread:65});

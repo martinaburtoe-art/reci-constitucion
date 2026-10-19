@@ -15,6 +15,20 @@
       "when": 1792278386339,
       "tag": "0001_community_features",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792369378601,
+      "tag": "0002_push_notifications",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792369475208,
+      "tag": "0003_protect_community_inputs",
+      "breakpoints": true
     }
   ]
 }

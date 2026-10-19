@@ -303,6 +303,74 @@ export type Database = {
         }
         Relationships: []
       }
+      push_deliveries: {
+        Row: {
+          event_key: string
+          sent_at: string
+          subscription_id: string
+        }
+        Insert: {
+          event_key: string
+          sent_at?: string
+          subscription_id: string
+        }
+        Update: {
+          event_key?: string
+          sent_at?: string
+          subscription_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_deliveries_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "push_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_keys: {
+        Row: {
+          id: string
+          private_key: Json
+          public_key: string
+        }
+        Insert: {
+          id?: string
+          private_key: Json
+          public_key: string
+        }
+        Update: {
+          id?: string
+          private_key?: Json
+          public_key?: string
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          created_at: string
+          endpoint: string
+          id: string
+          subscription: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          id?: string
+          subscription: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          id?: string
+          subscription?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       recycling_log_items: {
         Row: {
           cantidad: number
