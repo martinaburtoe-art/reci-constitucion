@@ -19,6 +19,23 @@ Configura en Vercel, para Production, Preview y Development según corresponda:
 
 No copiar valores reales a GitHub ni al chat. La clave de servicio debe mantenerse como variable sensible y nunca aparecer en código del cliente.
 
+## Primera cuenta administradora
+
+La primera cuenta con rol `super_admin` se debe habilitar una sola vez desde el SQL Editor de Supabase, después de registrar esa cuenta en la app. Reemplaza el correo por el correo de inicio de sesión real y revisa el usuario antes de ejecutar:
+
+```sql
+insert into public.user_roles (user_id, role)
+select u.id, 'super_admin'
+from auth.users u
+where u.email = 'REEMPLAZA_POR_TU_CORREO'
+  and not exists (
+    select 1 from public.user_roles r
+    where r.user_id = u.id and r.role = 'super_admin'
+  );
+```
+
+No publiques el correo ni ejecutes el SQL con el texto de ejemplo. Después, la sección `/admin` permite gestionar roles con protección para no eliminar al último superadministrador.
+
 ## Datos y migraciones
 La app usa el proyecto Supabase existente. Antes de publicar, aplicar las migraciones pendientes en orden y confirmar que el proyecto de base de datos corresponde a ReciConti. La migración `0004_public_impact_metrics.sql` agrega una función que solo expone métricas agregadas y no devuelve datos personales. Ejecuta las migraciones mediante el flujo administrativo autorizado, no desde el navegador de producción.
 
