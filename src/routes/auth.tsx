@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { APP_NAME } from "@/lib/app";
 import { Reci } from "@/components/Reci";
 import { Button } from "@/components/ui/button";
@@ -46,7 +45,7 @@ function AuthPage() {
     <div className="mx-auto flex min-h-[100dvh] max-w-md flex-col justify-center gap-6 p-6">
       <Reci message={`¡Hola! Soy Reci. ${mode === "in" ? "Ingresa" : "Crea tu cuenta"} para sumar puntos reciclando.`} />
       <h1 className="font-display text-3xl font-bold text-leaf-dark">{APP_NAME}</h1>
-      <Button variant="outline" onClick={() => lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin })}>
+      <Button variant="outline" onClick={async () => { const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } }); if (error) toast.error(error.message); }}>
         Continuar con Google
       </Button>
       <form onSubmit={submit} className="space-y-3">
