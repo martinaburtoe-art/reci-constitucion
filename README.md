@@ -25,8 +25,12 @@ No inventar coordenadas. Adjuntar una fuente oficial o verificable. Los puntos i
 
 Los registros se guardan en este dispositivo mientras la app está abierta sin señal. Se sincronizan al recuperar conexión con sesión válida, solo para el dueño. No borrar datos del navegador antes de sincronizar. Las fotos y denuncias requieren conexión. El service worker cachea recursos publicados y ofrece una página de respaldo: abrir por primera vez sin señal no proporciona el mapa ni un registro completo. No almacena respuestas privadas.
 
-ICS entrega recordatorios al calendario que el usuario elija. No hay notificaciones push remotas ni tareas programadas de racha: Reci presenta los recordatorios al abrir el perfil. Para push real se requiere suscripción, consentimiento y entrega programada con Web Push; no se simula con temporizadores.
+ICS entrega recordatorios al calendario que el usuario elija. Los avisos push y recordatorios de racha son voluntarios y requieren la app publicada; no funcionan dentro de la vista previa.
 
 ## Desarrollo
 
 `bun install`, `bun run dev`, `bun run test`. Migraciones en `drizzle/migrations/`; no modificar archivos generados de la integración. Los secretos se leen solo dentro de handlers del servidor. Las páginas privadas usan el acceso autenticado compartido.
+
+## Avisos push
+
+En la app publicada, activar desde Perfil → Recordatorios de Reci. En iPhone requiere agregar a pantalla de inicio. El calendario referencial no genera avisos: solo retiros confirmados del sector del usuario. El trabajo administrado `reciconti-reminders` revisa cada 30 minutos y avisa entre 30 y 60 minutos antes del retiro; celebra rachas de tres semanas y recuerda tras 14 días sin registros, como máximo una vez por semana. Claves VAPID privadas almacenadas únicamente en tabla accesible por el servicio. Sin contactos inventados: el identificador VAPID usa el origen de la solicitud verificada. La recepción depende del permiso y servicio del navegador; no se ha verificado entrega en un dispositivo real.

@@ -1,0 +1,2 @@
+self.addEventListener('push',e=>{let data={};try{data=e.data.json()}catch{}e.waitUntil(self.registration.showNotification(data.title||'ReciConti',{body:data.body||'Tienes un recordatorio de Reci',icon:'/reci-icon.svg',data:{url:data.url||'/perfil'}}))});
+self.addEventListener('notificationclick',e=>{e.notification.close();const path=e.notification.data?.url;const url=['/perfil','/registrar','/calendario'].includes(path)?path:'/';e.waitUntil(self.clients.openWindow(url))});
