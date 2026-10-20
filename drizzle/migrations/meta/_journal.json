@@ -29,6 +29,13 @@
       "when": 1792369475208,
       "tag": "0003_protect_community_inputs",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792440000000,
+      "tag": "0004_public_impact_metrics",
+      "breakpoints": true
     }
   ]
 }
