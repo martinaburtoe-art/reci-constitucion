@@ -30,3 +30,7 @@ ICS entrega recordatorios al calendario que el usuario elija. No hay notificacio
 ## Desarrollo
 
 `bun install`, `bun run dev`, `bun run test`. Migraciones en `drizzle/migrations/`; no modificar archivos generados de la integración. Los secretos se leen solo dentro de handlers del servidor. Las páginas privadas usan el acceso autenticado compartido.
+
+## Avisos push
+
+En la app publicada, activar desde Perfil → Recordatorios de Reci. En iPhone requiere agregar a pantalla de inicio. El calendario referencial no genera avisos: solo retiros confirmados del sector del usuario. El trabajo administrado `reciconti-reminders` revisa cada 30 minutos y avisa entre 30 y 60 minutos antes del retiro; celebra rachas de tres semanas y recuerda tras 14 días sin registros, como máximo una vez por semana. Claves VAPID privadas almacenadas únicamente en tabla accesible por el servicio. Sin contactos inventados: el identificador VAPID usa el origen de la solicitud verificada. La recepción depende del permiso y servicio del navegador; no se ha verificado entrega en un dispositivo real.
