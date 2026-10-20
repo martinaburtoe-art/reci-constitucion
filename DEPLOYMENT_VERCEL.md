@@ -36,6 +36,14 @@ where u.email = 'REEMPLAZA_POR_TU_CORREO'
 
 No publiques el correo ni ejecutes el SQL con el texto de ejemplo. Después, la sección `/admin` permite gestionar roles con protección para no eliminar al último superadministrador.
 
+## Recordatorios programados sin Lovable
+
+El plan Hobby de Vercel limita sus Cron Jobs a una ejecución diaria; por eso el recordatorio cada 30 minutos se programa mediante GitHub Actions, no con `vercel.json`. Configura estos secretos en GitHub → Settings → Secrets and variables → Actions:
+- `RECICONTI_APP_URL`: URL base de la app desplegada en Vercel, sin barra final.
+- `CRON_SECRET`: mismo valor aleatorio de al menos 32 caracteres que debes guardar como variable de entorno de servidor `CRON_SECRET` en Vercel. No lo publiques ni lo envíes por chat.
+
+El workflow `.github/workflows/reminders.yml` ejecuta `GET /api/public/reminders` cada 30 minutos y también permite una ejecución manual. GitHub Actions puede retrasar ejecuciones programadas; comprueba su historial tras publicar.
+
 ## Datos y migraciones
 La app usa el proyecto Supabase existente. Antes de publicar, aplicar las migraciones pendientes en orden y confirmar que el proyecto de base de datos corresponde a ReciConti. La migración `0004_public_impact_metrics.sql` agrega una función que solo expone métricas agregadas y no devuelve datos personales. Ejecuta las migraciones mediante el flujo administrativo autorizado, no desde el navegador de producción.
 
