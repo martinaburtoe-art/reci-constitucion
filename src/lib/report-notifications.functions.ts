@@ -39,7 +39,8 @@ export const notifyReportStatus = createServerFn({ method: 'POST' })
     if (!privateKey.d) throw new Error('Las notificaciones push no están configuradas.');
     const labels = { recibido: 'recibida', en_revision: 'en revisión', resuelto: 'resuelta', rechazado: 'cerrada sin resolución' } as const;
     const request = getRequest();
-    const subject = request?.url ? new URL(request.url).origin : 'https://example.invalid';
+    if (!request?.url) throw new Error('No pudimos identificar el origen para notificaciones.');
+    const subject = new URL(request.url).origin;
     let sent = 0;
 
     for (const sub of subscriptions ?? []) {
