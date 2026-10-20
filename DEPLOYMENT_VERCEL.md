@@ -7,6 +7,7 @@ ReciConti se compila con Vite + TanStack Start + Nitro. Lovable no es necesario 
 2. Usa la raíz del repositorio como Root Directory.
 3. Framework: TanStack Start (la detección se define en `vercel.json`).
 4. Deja que Vercel detecte el comando de instalación y compilación.
+5. En Supabase → Authentication → URL Configuration, define la URL de producción de Vercel como Site URL y agrega las URL de producción y preview necesarias a Redirect URLs.
 
 ## Variables de entorno
 Configura en Vercel, para Production, Preview y Development según corresponda:
@@ -42,7 +43,7 @@ El plan Hobby de Vercel limita sus Cron Jobs a una ejecución diaria; por eso el
 - `RECICONTI_APP_URL`: URL base de la app desplegada en Vercel, sin barra final.
 - `CRON_SECRET`: mismo valor aleatorio de al menos 32 caracteres que debes guardar como variable de entorno de servidor `CRON_SECRET` en Vercel. No lo publiques ni lo envíes por chat.
 
-El workflow `.github/workflows/reminders.yml` ejecuta `GET /api/public/reminders` cada 30 minutos y también permite una ejecución manual. GitHub Actions puede retrasar ejecuciones programadas; comprueba su historial tras publicar.
+El workflow `.github/workflows/reminders.yml` ejecuta `GET /api/public/reminders` cada 30 minutos y también permite una ejecución manual. Debe estar en `main` para que GitHub active el calendario; GitHub Actions puede retrasar ejecuciones programadas, así que comprueba su historial tras publicar.
 
 ## Datos y migraciones
 La app usa el proyecto Supabase existente. Antes de publicar, aplicar las migraciones pendientes en orden y confirmar que el proyecto de base de datos corresponde a ReciConti. La migración `0004_public_impact_metrics.sql` agrega una función que solo expone métricas agregadas y no devuelve datos personales. Ejecuta las migraciones mediante el flujo administrativo autorizado, no desde el navegador de producción.
