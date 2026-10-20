@@ -41,9 +41,9 @@ export default function PointsMap({
     points.forEach((p) => {
       const icon = L.divIcon({
         className: "",
-        html: `<div class="reci-pin ${p.verificado ? "" : "unverified"}" style="background:var(--${COLORS[p.estado]})"><span></span></div>`,
-        iconSize: [34, 34],
-        iconAnchor: [17, 34],
+        html: `<svg class="reci-pin-svg ${p.verificado ? "" : "unverified"}" width="34" height="42" viewBox="0 0 24 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0C5.4 0 0 5.4 0 12c0 8.4 12 18 12 18s12-9.6 12-18C24 5.4 18.6 0 12 0z" fill="var(--${COLORS[p.estado]})" stroke="var(--card)" stroke-width="1.5"/><circle cx="12" cy="11" r="4.5" fill="var(--card)"/></svg>`,
+        iconSize: [34, 42],
+        iconAnchor: [17, 42],
       });
       L.marker([p.lat, p.lng], { icon }).on("click", () => onSelect(p)).addTo(currentLayer);
     });
