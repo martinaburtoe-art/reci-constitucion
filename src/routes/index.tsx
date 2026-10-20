@@ -1,5 +1,5 @@
 import { createFileRoute, ClientOnly, Link } from "@tanstack/react-router";
-import { lazy, Suspense, useCallback, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { APP_NAME, ESTADO_LABEL, type PointLite } from "@/lib/app";
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/")({
 async function fetchPoints(): Promise<PointLite[]> {
   const { data, error } = await supabase
     .from("collection_points")
-    .select("id,nombre,direccion,lat,lng,horario,estado,nivel_llenado,verificado,fuente,point_materials(material_id)");
+    .select("id,nombre,direccion,lat,lng,horario,estado,nivel_llenado,verificado,fuente,foto_url,point_materials(material_id)");
   if (error) throw error;
   return (data ?? []).map((p: any) => ({ ...p, materiales: p.point_materials.map((m: any) => m.material_id) }));
 }
@@ -44,6 +44,7 @@ function Index() {
   const [sel, setSel] = useState<PointLite | null>(null);
   const shown = useMemo(() => points.filter(p => (!filter || p.materiales.includes(filter)) && `${p.nombre} ${p.direccion ?? ""}`.toLowerCase().includes(search.toLowerCase())), [points, filter, search]);
   const onSelect = useCallback((p: PointLite) => setSel(p), []);
+  useEffect(() => { const id = new URLSearchParams(window.location.search).get("punto"); if (id) { const match = points.find((p) => p.id === id); if (match) setSel(match); } }, [points]);
   const matName = (id: string) => materials.find((m) => m.id === id)?.nombre ?? id;
 
   return (
@@ -79,6 +80,7 @@ function Index() {
               </div>
               <Button variant="ghost" size="icon" onClick={() => setSel(null)} aria-label="Cerrar"><X className="h-5 w-5" /></Button>
             </div>
+            {sel.foto_url && <img src={sel.foto_url} alt={`Fotografía de ${sel.nombre}`} loading="lazy" referrerPolicy="no-referrer" className="mt-3 max-h-48 w-full rounded-xl object-cover" />}
             <p className="mt-2 text-xs text-muted-foreground">Fuente: {sel.fuente ?? "Sin fuente oficial — no verificado"}</p>
             {sel.direccion && <p className="mt-2 flex gap-1 text-sm"><MapPin className="h-4 w-4" />{sel.direccion}</p>}
             {sel.horario && <p className="mt-1 flex gap-1 text-sm"><Clock className="h-4 w-4" />{sel.horario}</p>}
@@ -93,6 +95,7 @@ function Index() {
                 href={`https://www.google.com/maps/dir/?api=1&destination=${sel.lat},${sel.lng}`}
                 target="_blank" rel="noreferrer"
               >Cómo llegar</a>
+              <a className="flex-1 rounded-xl border border-border py-2 text-center text-sm font-semibold" href={`https://wa.me/?text=${encodeURIComponent(`${sel.nombre} · Punto de reciclaje en Constitución: ${window.location.origin}/?punto=${encodeURIComponent(sel.id)}`)}`} target="_blank" rel="noreferrer">Compartir por WhatsApp</a>
               <Link to="/registrar" search={{ punto: sel.id }} className="flex-1 rounded-xl bg-primary py-2 text-center text-sm font-semibold text-primary-foreground">
                 Reciclé aquí
               </Link>
