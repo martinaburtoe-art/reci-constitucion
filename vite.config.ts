@@ -22,8 +22,8 @@ export default defineConfig({
       devOptions: { enabled: false },
       globDirectory: ".output/public",
       workbox: {
-        globPatterns: ["**/*.{js,css,svg,png,ico}", "offline.html"],
-        navigateFallback: "offline.html",
+      globPatterns: ["**/*.{js,css,svg,png,ico}"],
+        navigateFallback: "/",
         navigateFallbackDenylist: [/^\/~oauth/, /^\/api/, /^\/_serverFn/],
         importScripts: ["/push-events.js"],
         runtimeCaching: [{
