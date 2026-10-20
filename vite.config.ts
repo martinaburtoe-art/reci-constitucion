@@ -4,6 +4,7 @@ import { nitro } from "nitro/vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { resolve } from "node:path"
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
@@ -19,6 +20,7 @@ export default defineConfig({
       injectRegister: null,
       manifest: false,
       devOptions: { enabled: false },
+      globDirectory: ".output/public",
       workbox: {
         globPatterns: ["**/*.{js,css,svg,png,ico}", "offline.html"],
         navigateFallback: "offline.html",
@@ -33,4 +35,5 @@ export default defineConfig({
     }),
   ],
   resolve: { dedupe: ["react", "react-dom", "@tanstack/react-router"] },
+  build: { outDir: ".output/public", emptyOutDir: true },
 });
