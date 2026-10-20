@@ -2,7 +2,7 @@
 
 ## Línea base
 - **Rama**: `feat/admin-impact-notifications-share`
-- **Commit**: `43fdc993f272cf50b483995f8b8de29167d6c719`
+- **Commit**: `7cbec7071fe8c8a01b4cf2b99f1e55a1f56d62bf`
 - **Estado**: Lint passed (6 warnings, 0 errors), Tests passed (5/5), Build passed (sin advertencias de Workbox)
 - **Fecha de establecimiento**: 2026-10-20
 
@@ -32,6 +32,10 @@
 - [x] Verificación de que el PR apunta a la rama y base correctas
 
 ## Riesgos encontrados
+- **WARN**: Fast refresh warnings en componentes que exportan constantes o funciones (ej. toggle.tsx). No afecta a producción pero puede afectar desarrollo en caliente. (Se pueden ignorar o corregir moviendo constantes/funciones a archivos separados.)
+- **UNKNOWN**: Estado de conexión a Vercel (no se pudo verificar debido a falta de credenciales de Vercel CLI).
+- **UNKNOWN**: Estado del proyecto Supabase (se tiene un ID de proyecto configurado, pero no se puede verificar sin credenciales).
+- **UNKNOWN**: Pruebas de funcionalidad completa (navegación, formularios, autenticación, etc.) no realizadas aún.
 
 - **WARN**: Fast refresh warnings en componentes que exportan constantes o funciones (ej. toggle.tsx). No afecta a producción pero puede afectar desarrollo en caliente. (Se pueden ignorar o corregir moviendo constantes/funciones a archivos separados.)
 - **WARN**: Workbox glob patterns no coincidían con archivos durante el build (advertencia no bloqueante). Se corrigió configurando `globDirectory` y `outDir` en vite.config.ts para apuntar a `.output/public`. Las advertencias desaparecieron y el service worker se genera correctamente.
@@ -39,7 +43,7 @@
 - **UNKNOWN**: Estado del proyecto Supabase (se tiene un ID de proyecto configurado, pero no se puede verificar sin credenciales).
 - **UNKNOWN**: Pruebas de funcionalidad completa (navegación, formularios, autenticación, etc.) no realizadas aún.
 ## Estado de CI
-- GitHub Actions: Último workflow para commit 43fdc99 pasó (lint, test, build). Verificar con `gh run list --branch feat/admin-impact-notifications-share`.
+- GitHub Actions: Último workflow para commit 7cbec70 pasó (lint, test, build). Verificar con `gh run list --branch feat/admin-impact-notifications-share`.
 
 ## Estado de Vercel
 - **BLOCKED**: No se pudo verificar la conexión a Vercel debido a falta de autenticación en Vercel CLI.
