@@ -150,6 +150,9 @@
 }
 .reci-pin.unverified { border-style: dashed; border-color: var(--warning); }
 .reci-pin > span { transform: rotate(45deg); width: 10px; height: 10px; border-radius: 9999px; background: var(--card); }
+.reci-pin-svg { filter: drop-shadow(0 3px 4px rgb(0 0 0 / 0.25)); animation: pin-svg-drop 0.55s cubic-bezier(.34,1.56,.64,1) both; }
+.reci-pin-svg.unverified path { stroke: var(--warning); stroke-dasharray: 3 2; stroke-width: 2; }
+@keyframes pin-svg-drop { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes pin-drop { from { transform: translateY(-40px) rotate(-45deg); opacity: 0; } to { transform: translateY(0) rotate(-45deg); opacity: 1; } }
 .reci-cluster { display: grid; place-items: center; border-radius: 9999px; background: var(--primary); color: var(--primary-foreground); font-weight: 800; border: 4px solid color-mix(in oklch, var(--primary) 35%, transparent); }
 .leaflet-container { font-family: var(--font-sans); background: var(--muted); }
