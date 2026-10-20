@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start';
+import { getRequest } from '@tanstack/react-start/server';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { z } from 'zod';
 
@@ -37,6 +38,8 @@ export const notifyReportStatus = createServerFn({ method: 'POST' })
     const privateKey = keys.private_key as { d?: string };
     if (!privateKey.d) throw new Error('Las notificaciones push no están configuradas.');
     const labels = { recibido: 'recibida', en_revision: 'en revisión', resuelto: 'resuelta', rechazado: 'cerrada sin resolución' } as const;
+    const request = getRequest();
+    const subject = request?.url ? new URL(request.url).origin : 'https://example.invalid';
     let sent = 0;
 
     for (const sub of subscriptions ?? []) {
@@ -54,7 +57,7 @@ export const notifyReportStatus = createServerFn({ method: 'POST' })
           }),
           options: { ttl: 3600 },
         }, subscription, {
-          subject: 'https://reci-constitucion.lovable.app',
+          subject,
           publicKey: keys.public_key,
           privateKey: privateKey.d,
         });
