@@ -30,7 +30,7 @@ async function fetchPoints(): Promise<PointLite[]> {
     .from("collection_points")
     .select("id,nombre,direccion,lat,lng,horario,estado,nivel_llenado,verificado,fuente,foto_url,point_materials(material_id)");
   if (error) throw error;
-  return (data ?? []).map((p: any) => ({ ...p, materiales: p.point_materials.map((m: any) => m.material_id) }));
+  return (data ?? []).map((p) => ({ ...p, materiales: (p.point_materials ?? []).map((m) => m.material_id) }));
 }
 
 function Index() {
