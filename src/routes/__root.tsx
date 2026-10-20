@@ -11,6 +11,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import { Help } from "@/components/Help";
+import { registerWorker } from "@/lib/pwa";
 import { syncDeposits } from "@/lib/offline";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -133,7 +134,7 @@ function RootComponent() {
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", localStorage.getItem("reci-theme") === "dark");
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+    registerWorker().catch(() => {});
     const sync = () => { syncDeposits().then(n => { if(n) queryClient.invalidateQueries(); }).catch(() => {}); };
     sync(); window.addEventListener("online", sync); return () => window.removeEventListener("online", sync);
   }, [queryClient]);
