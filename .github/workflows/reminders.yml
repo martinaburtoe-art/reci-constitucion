@@ -1,0 +1,35 @@
+name: ReciConti reminders
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  send-reminders:
+    if: github.repository == 'martinaburtoe-art/reci-constitucion'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate configuration
+        shell: bash
+        env:
+          RECICONTI_APP_URL: ${{ secrets.RECICONTI_APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -euo pipefail
+          test -n "${RECICONTI_APP_URL}" || { echo "Missing RECICONTI_APP_URL secret"; exit 1; }
+          test -n "${CRON_SECRET}" || { echo "Missing CRON_SECRET secret"; exit 1; }
+      - name: Invoke reminder endpoint
+        shell: bash
+        env:
+          RECICONTI_APP_URL: ${{ secrets.RECICONTI_APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --max-time 180 \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "${RECICONTI_APP_URL%/}/api/public/reminders"
