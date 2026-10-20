@@ -61,3 +61,21 @@ export const setAdminRole = createServerFn({ method: 'POST' })
 
     return { success: true };
   });
+
+export const getAdminDirectory = createServerFn({ method: 'GET' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: allowed, error: roleError } = await context.supabase.rpc('has_role', {
+      _user_id: context.userId,
+      _role: 'super_admin',
+    });
+    if (roleError || !allowed) throw new Error('Solo un superadministrador puede consultar las cuentas.');
+
+    const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+    const [{ data: users, error: usersError }, { data: roles, error: rolesError }] = await Promise.all([
+      supabaseAdmin.from('profiles').select('id,display_name,sector').order('display_name'),
+      supabaseAdmin.from('user_roles').select('user_id,role'),
+    ]);
+    if (usersError || rolesError) throw new Error('No pudimos cargar el directorio de administración.');
+    return { users: users ?? [], roles: roles ?? [] };
+  });
