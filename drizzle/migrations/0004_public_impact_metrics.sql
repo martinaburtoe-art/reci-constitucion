@@ -3,7 +3,7 @@ RETURNS TABLE(total_kg numeric, total_co2 numeric, total_registros bigint, punto
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
-SET search_path = public
+SET search_path = pg_catalog, public
 AS $$
   SELECT
     COALESCE((SELECT SUM(kg_total) FROM public.recycling_logs), 0)::numeric,
