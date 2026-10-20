@@ -25,7 +25,7 @@ No inventar coordenadas. Adjuntar una fuente oficial o verificable. Los puntos i
 
 Los registros se guardan en este dispositivo mientras la app está abierta sin señal. Se sincronizan al recuperar conexión con sesión válida, solo para el dueño. No borrar datos del navegador antes de sincronizar. Las fotos y denuncias requieren conexión. El service worker cachea recursos publicados y ofrece una página de respaldo: abrir por primera vez sin señal no proporciona el mapa ni un registro completo. No almacena respuestas privadas.
 
-ICS entrega recordatorios al calendario que el usuario elija. No hay notificaciones push remotas ni tareas programadas de racha: Reci presenta los recordatorios al abrir el perfil. Para push real se requiere suscripción, consentimiento y entrega programada con Web Push; no se simula con temporizadores.
+ICS entrega recordatorios al calendario que el usuario elija. Los avisos push y recordatorios de racha son voluntarios y requieren la app publicada; no funcionan dentro de la vista previa.
 
 ## Desarrollo
 
