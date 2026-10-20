@@ -14,6 +14,7 @@ export type PointLite = {
   verificado: boolean;
   materiales: string[];
   fuente?: string | null;
+  foto_url?: string | null;
 };
 
 export const ESTADO_LABEL = { activo: "Activo", lleno: "Lleno", cerrado: "Cerrado" } as const;
