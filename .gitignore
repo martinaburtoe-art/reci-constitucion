@@ -1,3 +1,8 @@
+# Environment secrets (keep .env.example versioned)
+.env
+.env.*
+!.env.example
+
 # Logs
 logs
 *.log
