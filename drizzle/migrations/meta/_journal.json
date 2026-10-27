@@ -43,6 +43,13 @@
       "when": 1793069100000,
       "tag": "0005_private_storage_buckets",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793069200000,
+      "tag": "0006_harden_rpc_privileges",
+      "breakpoints": true
     }
   ]
 }
