@@ -57,6 +57,13 @@
       "when": 1793069250000,
       "tag": "0007_scope_role_helpers_to_self",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793069300000,
+      "tag": "0008_index_foreign_keys",
+      "breakpoints": true
     }
   ]
 }
