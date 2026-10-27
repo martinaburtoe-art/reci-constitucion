@@ -71,7 +71,7 @@ function AuthPage() {
           : await supabase.auth.signUp({
               email: email.trim(),
               password: pass,
-              options: { emailRedirectTo: window.location.origin },
+              options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
             });
 
       if (result.error) {
