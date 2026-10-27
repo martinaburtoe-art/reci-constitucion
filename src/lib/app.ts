@@ -14,6 +14,11 @@ export type PointLite = {
   verificado: boolean;
   materiales: string[];
   fuente?: string | null;
+  foto_url?: string | null;
+  operador?: string | null;
+  telefono?: string | null;
+  dias_atencion?: string | null;
+  dias_retiro?: string | null;
 };
 
 export const ESTADO_LABEL = { activo: "Activo", lleno: "Lleno", cerrado: "Cerrado" } as const;
