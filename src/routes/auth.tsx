@@ -71,7 +71,7 @@ function AuthPage() {
           : await supabase.auth.signUp({
               email: email.trim(),
               password: pass,
-              options: { emailRedirectTo: window.location.origin },
+              options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
             });
 
       if (result.error) {
@@ -99,7 +99,7 @@ function AuthPage() {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: window.location.origin },
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
       });
       if (error) {
         const message = /unsupported provider|missing oauth secret|provider is not enabled/i.test(error.message)
