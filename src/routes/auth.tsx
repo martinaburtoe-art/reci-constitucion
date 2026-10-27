@@ -69,7 +69,7 @@ function AuthPage() {
       </Button>
       <form onSubmit={submit} className="space-y-3">
         <Input type="email" placeholder="Correo" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <Input type="password" placeholder="Contraseña" minLength={6} value={pass} onChange={(e) => setPass(e.target.value)} required />
+        <Input type="password" placeholder="Contraseña (mínimo 8 caracteres)" minLength={8} value={pass} onChange={(e) => setPass(e.target.value)} required />
         <Button className="w-full" disabled={busy}>{mode === "in" ? "Ingresar" : "Crear cuenta"}</Button>
       </form>
       <button className="text-sm text-muted-foreground underline" onClick={() => setMode(mode === "in" ? "up" : "in")}>
