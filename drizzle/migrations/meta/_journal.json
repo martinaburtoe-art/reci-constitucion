@@ -50,6 +50,13 @@
       "when": 1793069200000,
       "tag": "0006_harden_rpc_privileges",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793069250000,
+      "tag": "0007_scope_role_helpers_to_self",
+      "breakpoints": true
     }
   ]
 }
