@@ -137,7 +137,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth/callback': typeof AuthCallbackRoute
   '/auth': typeof AuthRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/calendario': typeof CalendarioRoute
