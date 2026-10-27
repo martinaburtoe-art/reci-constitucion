@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { APP_NAME } from "@/lib/app";
 import { Reci } from "@/components/Reci";
 import { Button } from "@/components/ui/button";
@@ -35,19 +34,38 @@ function AuthPage() {
     const { error } =
       mode === "in"
         ? await supabase.auth.signInWithPassword({ email, password: pass })
-        : await supabase.auth.signUp({ email, password: pass, options: { emailRedirectTo: `${window.location.origin}/auth/callback` } });
+        : await supabase.auth.signUp({
+            email,
+            password: pass,
+            options: { emailRedirectTo: window.location.origin + "/auth/callback" },
+          });
     setBusy(false);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     if (mode === "up") toast.success("Revisa tu correo para confirmar tu cuenta.");
     else nav({ to: "/perfil" });
+  }
+
+  async function signInWithGoogle() {
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin + "/auth/callback" },
+    });
+    if (error) {
+      setBusy(false);
+      toast.error("No pudimos iniciar sesión con Google: " + error.message);
+    }
   }
 
   return (
     <div className="mx-auto flex min-h-[100dvh] max-w-md flex-col justify-center gap-6 p-6">
       <Reci message={`¡Hola! Soy Reci. ${mode === "in" ? "Ingresa" : "Crea tu cuenta"} para sumar puntos reciclando.`} />
       <h1 className="font-display text-3xl font-bold text-leaf-dark">{APP_NAME}</h1>
-      <Button variant="outline" onClick={() => lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}/auth/callback` })}>
-        Continuar con Google
+      <Button variant="outline" onClick={() => void signInWithGoogle()} disabled={busy}>
+        {busy ? "Conectando…" : "Continuar con Google"}
       </Button>
       <form onSubmit={submit} className="space-y-3">
         <Input type="email" placeholder="Correo" value={email} onChange={(e) => setEmail(e.target.value)} required />
