@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { APP_NAME } from "@/lib/app";
@@ -27,12 +27,21 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [busy, setBusy] = useState(false);
+  const [resetMode, setResetMode] = useState(false);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") setResetMode(true);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    const { error } =
-      mode === "in"
+    const { error } = resetMode
+      ? await supabase.auth.updateUser({ password: pass })
+      : mode === "in"
         ? await supabase.auth.signInWithPassword({ email, password: pass })
         : await supabase.auth.signUp({
             email,
@@ -44,8 +53,26 @@ function AuthPage() {
       toast.error(error.message);
       return;
     }
-    if (mode === "up") toast.success("Revisa tu correo para confirmar tu cuenta.");
+    if (resetMode) {
+      setResetMode(false);
+      toast.success("Contraseña actualizada.");
+      nav({ to: "/perfil" });
+    } else if (mode === "up") toast.success("Revisa tu correo para confirmar tu cuenta.");
     else nav({ to: "/perfil" });
+  }
+
+  async function requestPasswordReset() {
+    if (!email.trim()) {
+      toast.error("Escribe tu correo para enviarte el enlace de recuperación.");
+      return;
+    }
+    setBusy(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: window.location.origin + "/auth",
+    });
+    setBusy(false);
+    if (error) toast.error("No pudimos enviar el enlace de recuperación: " + error.message);
+    else toast.success("Si existe una cuenta con ese correo, recibirá un enlace para cambiar su contraseña.");
   }
 
   async function signInWithGoogle() {
@@ -69,12 +96,13 @@ function AuthPage() {
       </Button>
       <form onSubmit={submit} className="space-y-3">
         <Input type="email" placeholder="Correo" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <Input type="password" placeholder="Contraseña" minLength={6} value={pass} onChange={(e) => setPass(e.target.value)} required />
-        <Button className="w-full" disabled={busy}>{mode === "in" ? "Ingresar" : "Crear cuenta"}</Button>
+        <Input type="password" placeholder={resetMode ? "Nueva contraseña (mínimo 8 caracteres)" : "Contraseña (mínimo 8 caracteres)"} minLength={8} value={pass} onChange={(e) => setPass(e.target.value)} required />
+        <Button className="w-full" disabled={busy}>{busy ? "Procesando…" : resetMode ? "Actualizar contraseña" : mode === "in" ? "Ingresar" : "Crear cuenta"}</Button>
       </form>
-      <button className="text-sm text-muted-foreground underline" onClick={() => setMode(mode === "in" ? "up" : "in")}>
+      {!resetMode && mode === "in" && <button className="text-sm text-muted-foreground underline" onClick={() => void requestPasswordReset()} disabled={busy}>¿Olvidaste tu contraseña?</button>}
+      {!resetMode && <button className="text-sm text-muted-foreground underline" onClick={() => setMode(mode === "in" ? "up" : "in")}>
         {mode === "in" ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Ingresa"}
-      </button>
+      </button>}
     </div>
   );
 }
