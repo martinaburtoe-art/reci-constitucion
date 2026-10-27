@@ -20,6 +20,19 @@ Configura en Vercel, para Production, Preview y Development según corresponda:
 
 No copiar valores reales a GitHub ni al chat. La clave de servicio debe mantenerse como variable sensible y nunca aparecer en código del cliente.
 
+## Google OAuth (backend independiente)
+
+Este proyecto usa el proveedor OAuth de **su propio proyecto Supabase**; no usa el broker de autenticación de Lovable.
+
+1. En Supabase → Authentication → URL Configuration, configura como **Site URL** `https://reci-constitucion.vercel.app`.
+2. En **Redirect URLs**, agrega `https://reci-constitucion.vercel.app/**`. Para probar despliegues de preview, agrega el dominio de preview exacto que entrega Vercel o una regla wildcard de preview compatible con la configuración de Supabase.
+3. En Google Cloud Console, crea o usa un OAuth Client de tipo **Web application** y registra esta URI en **Authorized redirect URIs**:
+   `https://qajygywlobkdhdatixtg.supabase.co/auth/v1/callback`
+4. En Supabase → Authentication → Sign In / Providers → Google, habilita Google y pega el **Client ID** y el **Client Secret** de Google Cloud. No guardes el secreto en GitHub ni en variables `VITE_*`.
+5. Guarda la configuración y prueba desde la URL de producción. El navegador debe salir hacia el endpoint `/auth/v1/authorize` de este proyecto Supabase y volver a la URL de ReciConti, no a un dominio de Lovable.
+
+Si Google no está habilitado o faltan sus credenciales, el código de la app muestra un mensaje de fallback; eso no sustituye la configuración del proveedor en Supabase.
+
 ## Primera cuenta administradora
 
 La primera cuenta con rol `super_admin` se debe habilitar una sola vez desde el SQL Editor de Supabase, después de registrar esa cuenta en la app. Reemplaza el correo por el correo de inicio de sesión real y revisa el usuario antes de ejecutar:
