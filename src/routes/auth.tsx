@@ -34,23 +34,42 @@ function AuthPage() {
     const { error } =
       mode === "in"
         ? await supabase.auth.signInWithPassword({ email, password: pass })
-        : await supabase.auth.signUp({ email, password: pass, options: { emailRedirectTo: window.location.origin } });
+        : await supabase.auth.signUp({
+            email,
+            password: pass,
+            options: { emailRedirectTo: window.location.origin + "/auth/callback" },
+          });
     setBusy(false);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     if (mode === "up") toast.success("Revisa tu correo para confirmar tu cuenta.");
     else nav({ to: "/perfil" });
+  }
+
+  async function signInWithGoogle() {
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin + "/auth/callback" },
+    });
+    if (error) {
+      setBusy(false);
+      toast.error("No pudimos iniciar sesión con Google: " + error.message);
+    }
   }
 
   return (
     <div className="mx-auto flex min-h-[100dvh] max-w-md flex-col justify-center gap-6 p-6">
       <Reci message={`¡Hola! Soy Reci. ${mode === "in" ? "Ingresa" : "Crea tu cuenta"} para sumar puntos reciclando.`} />
       <h1 className="font-display text-3xl font-bold text-leaf-dark">{APP_NAME}</h1>
-      <Button variant="outline" onClick={async () => { const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } }); if (error) toast.error(error.message); }}>
-        Continuar con Google
-      </Button>
+      <Button variant="outline" onClick={() => void signInWithGoogle()} disabled={busy}>
+              {busy ? "Conectando…" : "Continuar con Google"}
+            </Button>
       <form onSubmit={submit} className="space-y-3">
         <Input type="email" placeholder="Correo" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <Input type="password" placeholder="Contraseña" minLength={6} value={pass} onChange={(e) => setPass(e.target.value)} required />
+        <Input type="password" placeholder="Contraseña (mínimo 8 caracteres)" minLength={8} value={pass} onChange={(e) => setPass(e.target.value)} required />
         <Button className="w-full" disabled={busy}>{mode === "in" ? "Ingresar" : "Crear cuenta"}</Button>
       </form>
       <button className="text-sm text-muted-foreground underline" onClick={() => setMode(mode === "in" ? "up" : "in")}>

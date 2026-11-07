@@ -26,6 +26,11 @@ function Perfil() {
     queryKey: ["profile", user.id],
     queryFn: async () => (await supabase.from("profiles").select("*").eq("id", user.id).single()).data,
   });
+  const { data: roles = [] } = useQuery({
+    queryKey: ["profile-roles", user.id],
+    queryFn: async () => (await supabase.from("user_roles").select("role").eq("user_id", user.id)).data ?? [],
+  });
+  const canAdmin = roles.some((r) => r.role === "super_admin" || r.role === "admin_punto");
   const { data: logs = [] } = useQuery({
     queryKey: ["logs", user.id],
     queryFn: async () =>
@@ -54,6 +59,7 @@ function Perfil() {
         <Stat label="kg CO₂" value={co2.toFixed(1)} />
       </div>
       <ProfileExtras user={user.id} alias={profile.display_name ?? "Vecino/a"} logs={logs} />
+      {canAdmin && <Link to="/admin" className="flex items-center justify-center rounded-xl border border-primary/30 bg-primary/5 p-3 text-sm font-semibold text-primary">Administración ReciConti →</Link>}
       <h2 className="font-display text-xl font-bold">Historial</h2>
       {logs.length === 0 ? (
         <Link to="/registrar" search={{ punto: undefined }} className="block rounded-2xl bg-secondary p-4 text-center text-sm">Aún no registras nada. ¡Parte ahora!</Link>

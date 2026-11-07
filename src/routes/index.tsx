@@ -28,13 +28,13 @@ export const Route = createFileRoute("/")({
 async function fetchPoints(): Promise<PointLite[]> {
   const { data, error } = await supabase
     .from("collection_points")
-    .select("id,nombre,direccion,lat,lng,horario,estado,nivel_llenado,verificado,fuente,foto_url,point_materials(material_id)");
+    .select("id,nombre,direccion,lat,lng,horario,estado,nivel_llenado,verificado,fuente,foto_url,operador,telefono,dias_atencion,dias_retiro,point_materials(material_id)");
   if (error) throw error;
   return (data ?? []).map((p) => ({ ...p, materiales: (p.point_materials ?? []).map((m) => m.material_id) }));
 }
 
 function Index() {
-  const { data: points = [] } = useQuery({ queryKey: ["points"], queryFn: fetchPoints });
+  const { data: points = [], isError: pointsError } = useQuery({ queryKey: ["points"], queryFn: fetchPoints });
   const { data: materials = [] } = useQuery({
     queryKey: ["materials"],
     queryFn: async () => (await supabase.from("materials").select("id,nombre,color").order("orden")).data ?? [],
@@ -68,6 +68,18 @@ function Index() {
         </div>
       </header>
 
+      {pointsError ? (
+        <div role="alert" className="absolute inset-x-3 top-36 z-[900] mx-auto max-w-md rounded-2xl border bg-card/95 p-4 shadow-float backdrop-blur">
+          <h2 className="font-semibold">No pudimos cargar los puntos</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Revisa tu conexión e inténtalo nuevamente. No mostraremos ubicaciones que no hayamos podido consultar.</p>
+        </div>
+      ) : points.length === 0 ? (
+        <div role="status" className="absolute inset-x-3 top-36 z-[900] mx-auto max-w-md rounded-2xl border bg-card/95 p-4 shadow-float backdrop-blur">
+          <h2 className="font-semibold">Estamos actualizando el catastro</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Todavía no hay puntos de reciclaje confirmados para publicar en el mapa. Preferimos verificar la información antes de enviarte a una ubicación incorrecta.</p>
+        </div>
+      ) : null}
+
       {sel && (
         <div className="absolute inset-x-0 bottom-16 max-h-[65dvh] overflow-y-auto z-[1000] p-3">
           <div className="mx-auto max-w-md rounded-2xl bg-card p-4 shadow-float">
@@ -80,10 +92,14 @@ function Index() {
               </div>
               <Button variant="ghost" size="icon" onClick={() => setSel(null)} aria-label="Cerrar"><X className="h-5 w-5" /></Button>
             </div>
-            {sel.foto_url && <img src={sel.foto_url} alt={`Fotografía de ${sel.nombre}`} loading="lazy" referrerPolicy="no-referrer" className="mt-3 max-h-48 w-full rounded-xl object-cover" />}
+{sel.foto_url && <img src={sel.foto_url} alt={`Foto de ${sel.nombre}`} loading="lazy" className="mt-3 max-h-48 w-full rounded-xl object-cover"/>}
             <p className="mt-2 text-xs text-muted-foreground">Fuente: {sel.fuente ?? "Sin fuente oficial — no verificado"}</p>
             {sel.direccion && <p className="mt-2 flex gap-1 text-sm"><MapPin className="h-4 w-4" />{sel.direccion}</p>}
             {sel.horario && <p className="mt-1 flex gap-1 text-sm"><Clock className="h-4 w-4" />{sel.horario}</p>}
+            {sel.dias_atencion&&<p className="mt-1 text-sm">Atención: {sel.dias_atencion}</p>}
+            {sel.dias_retiro&&<p className="mt-1 text-sm">Días de retiro: {sel.dias_retiro}</p>}
+            {sel.operador&&<p className="mt-1 text-sm">Operador: {sel.operador}</p>}
+            {sel.telefono&&<p className="mt-1 text-sm">Contacto: <a className="text-primary underline" href={`tel:${sel.telefono}`}>{sel.telefono}</a></p>}
             <div className="mt-2 flex flex-wrap gap-1">
               {sel.materiales.map((m) => (
                 <span key={m} className="rounded-full bg-secondary px-2 py-0.5 text-xs">{matName(m)}</span>
