@@ -98,7 +98,7 @@ async function fetchPoints(): Promise<PointLite[]> {
 }
 
 function Index() {
-  const { data: points = [], isError: pointsError } = useQuery({ queryKey: ["points"], queryFn: fetchPoints });
+  const { data: points = [] } = useQuery({ queryKey: ["points"], queryFn: fetchPoints });
   const { data: materials = [] } = useQuery({
     queryKey: ["materials"],
     queryFn: async () => (await supabase.from("materials").select("id,nombre,color").order("orden")).data ?? [],
@@ -107,7 +107,7 @@ function Index() {
   const [filter, setFilter] = useState<string | null>(null);
   const [sel, setSel] = useState<PointLite | null>(null);
   const allPoints = useMemo(() => [...LOCAL_MAP_POINTS, ...points], [points]);
-  const shown = useMemo(() => allPoints.filter(p => (!filter || p.materiales.includes(filter)) && `${p.nombre} ${p.direccion ?? ""}`.toLowerCase().includes(search.toLowerCase())), [allPoints, filter, search]);
+  const shown = useMemo(() => allPoints.filter(p => (p.id.startsWith("local-") || !filter || p.materiales.includes(filter)) && `${p.nombre} ${p.direccion ?? ""}`.toLowerCase().includes(search.toLowerCase())), [allPoints, filter, search]);
   const onSelect = useCallback((p: PointLite) => setSel(p), []);
   const matName = (id: string) => materials.find((m) => m.id === id)?.nombre ?? id;
 
@@ -131,49 +131,6 @@ function Index() {
           </div>
         </div>
       </header>
-
-      {pointsError ? (
-        <div role="alert" className="absolute inset-x-3 top-36 z-[900] mx-auto max-w-md rounded-2xl border bg-card/95 p-4 shadow-float backdrop-blur">
-          <h2 className="font-semibold">No pudimos cargar los puntos</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Revisa tu conexión e inténtalo nuevamente. No mostraremos ubicaciones que no hayamos podido consultar.</p>
-        </div>
-      ) : points.length === 0 ? (
-        <div role="status" className="absolute inset-x-3 top-36 z-[900] mx-auto max-w-md rounded-2xl border bg-card/95 p-4 shadow-float backdrop-blur">
-          <h2 className="font-semibold">Estamos actualizando el catastro</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Todavía no hay puntos de reciclaje confirmados para publicar en el mapa. Preferimos verificar la información antes de enviarte a una ubicación incorrecta.</p>
-        </div>
-      ) : null}
-
-      <section aria-label="Directorio local de reciclaje" className="absolute inset-x-3 bottom-[4.7rem] z-[900] mx-auto max-w-md max-h-[38dvh] overflow-y-auto rounded-2xl border bg-card/95 p-3 shadow-float backdrop-blur">
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <div>
-            <h2 className="font-display text-base font-bold">Dónde reciclar en Constitución</h2>
-            <p className="text-xs text-muted-foreground">Lugares y gestores locales · confirma antes de ir</p>
-          </div>
-          <span className="shrink-0 rounded-full bg-secondary px-2 py-1 text-[10px] font-semibold">2 referencias</span>
-        </div>
-        <div className="space-y-2">
-          {LOCAL_RECYCLING_SERVICES.map((service) => (
-            <article key={service.id} className="rounded-xl border bg-background/80 p-3">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h3 className="text-sm font-semibold">{service.name}</h3>
-                  <p className="text-[11px] text-muted-foreground">{service.kind}</p>
-                </div>
-                <a className="shrink-0 text-xs font-semibold text-primary underline" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(service.mapsQuery)}`} target="_blank" rel="noreferrer">Cómo llegar</a>
-              </div>
-              <p className="mt-1 text-xs">{service.address}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{service.hours}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{service.materials}</p>
-              <p className="mt-1 text-[11px] text-muted-foreground">{service.note}</p>
-              <div className="mt-2 flex items-center gap-3 text-xs">
-                <a className="font-medium text-primary underline" href={`tel:${service.phone.replace(/[^+0-9]/g, "")}`}>{service.phone}</a>
-                <a className="font-medium text-primary underline" href={service.source} target="_blank" rel="noreferrer">{service.sourceLabel}</a>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
 
       {sel && (
         <div className="absolute inset-x-0 bottom-16 max-h-[65dvh] overflow-y-auto z-[1000] p-3">
