@@ -7,7 +7,7 @@ import { LocateFixed } from "lucide-react";
 import { toast } from "sonner";
 import { MAP_CENTER, MAP_ZOOM, type PointLite } from "@/lib/app";
 
-const COLORS = { activo: "primary", lleno: "warning", cerrado: "muted-foreground" };
+const COLORS = { activo: "#e53935", lleno: "#f59e0b", cerrado: "#94a3b8" };
 
 export default function PointsMap({
   points,
@@ -27,7 +27,7 @@ export default function PointsMap({
       attribution: "© OpenStreetMap",
       maxZoom: 19,
     }).addTo(map.current);
-    layer.current = L.markerClusterGroup({iconCreateFunction: c => L.divIcon({html: String(c.getChildCount()),className:"reci-cluster",iconSize:[40,40]})}).addTo(map.current);
+    layer.current = L.markerClusterGroup({iconCreateFunction: c => L.divIcon({html: `<div style="width:40px;height:40px;border-radius:9999px;background:#e53935;color:white;border:3px solid white;box-shadow:0 2px 8px #0004;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px">${c.getChildCount()}</div>`,className:"",iconSize:[40,40]})}).addTo(map.current);
     return () => {
       map.current?.remove();
       map.current = null;
@@ -41,7 +41,7 @@ export default function PointsMap({
     points.forEach((p) => {
       const icon = L.divIcon({
         className: "",
-        html: `<svg class="reci-pin-svg ${p.verificado ? "" : "unverified"}" width="34" height="42" viewBox="0 0 24 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0C5.4 0 0 5.4 0 12c0 8.4 12 18 12 18s12-9.6 12-18C24 5.4 18.6 0 12 0z" fill="var(--${COLORS[p.estado]})" stroke="var(--card)" stroke-width="1.5"/><circle cx="12" cy="11" r="4.5" fill="var(--card)"/></svg>`,
+        html: `<svg class="reci-pin-svg ${p.verificado ? "" : "unverified"}" width="34" height="42" viewBox="0 0 24 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 0C5.4 0 0 5.4 0 12c0 8.4 12 18 12 18s12-9.6 12-18C24 5.4 18.6 0 12 0z" fill="${COLORS[p.estado]}" stroke="var(--card)" stroke-width="1.5"/><circle cx="12" cy="11" r="4.5" fill="var(--card)"/></svg>`,
         iconSize: [34, 42],
         iconAnchor: [17, 42],
       });
