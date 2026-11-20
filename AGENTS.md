@@ -17,3 +17,8 @@
 
 - Web Push keys are generated with Web Crypto and stored in service-only tables; only the public key reaches the browser.
 - Offline service workers are generated with vite-plugin-pwa and registered only outside development, preview, iframe, and kill-switch contexts to avoid stale previews.
+
+
+## Hermes Agent (ReciConti)
+
+Before making changes with Hermes, read `HERMES.md` for the project workflow, branch policy, verification requirements, and deployment status. Keep the existing security and data-integrity rules above. Do not assume Lovable, Supabase, or Vercel connectivity is configured merely because the code exists in this repository.

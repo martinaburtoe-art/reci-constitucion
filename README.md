@@ -1,6 +1,6 @@
 # ReciConti
 
-Aplicación en español de Chile para reciclaje en Constitución, Maule. React, TanStack Start, Tailwind, Leaflet y Lovable Cloud.
+Aplicación en español de Chile para reciclaje en Constitución, Maule. React, TanStack Start, Tailwind, Leaflet, Supabase y Vercel.
 
 ## Catastro oficial
 
@@ -33,4 +33,11 @@ ICS entrega recordatorios al calendario que el usuario elija. Los avisos push y 
 
 ## Avisos push
 
-En la app publicada, activar desde Perfil → Recordatorios de Reci. En iPhone requiere agregar a pantalla de inicio. El calendario referencial no genera avisos: solo retiros confirmados del sector del usuario. El trabajo administrado `reciconti-reminders` revisa cada 30 minutos y avisa entre 30 y 60 minutos antes del retiro; celebra rachas de tres semanas y recuerda tras 14 días sin registros, como máximo una vez por semana. Claves VAPID privadas almacenadas únicamente en tabla accesible por el servicio. Sin contactos inventados: el identificador VAPID usa el origen de la solicitud verificada. La recepción depende del permiso y servicio del navegador; no se ha verificado entrega en un dispositivo real.
+En la app publicada, activar desde Perfil → Recordatorios de Reci. En iPhone requiere agregar a pantalla de inicio. El calendario referencial no genera avisos: solo retiros confirmados del sector del usuario. El workflow de GitHub Actions `ReciConti reminders` llama al endpoint cada 30 minutos y avisa entre 30 y 60 minutos antes del retiro; celebra rachas de tres semanas y recuerda tras 14 días sin registros, como máximo una vez por semana. Claves VAPID privadas almacenadas únicamente en tabla accesible por el servicio. Sin contactos inventados: el identificador VAPID usa el origen de la solicitud verificada. La recepción depende del permiso y servicio del navegador; no se ha verificado entrega en un dispositivo real.
+
+
+## Despliegue independiente
+
+El alojamiento no depende de Lovable. La app se configura para Vercel con TanStack Start + Nitro (`vercel.json`). Consulta [DEPLOYMENT_VERCEL.md](./DEPLOYMENT_VERCEL.md) y usa [`.env.example`](./.env.example) como lista de variables requeridas. La cámara con IA utiliza la API de OpenAI mediante `OPENAI_API_KEY`; el proveedor no se configura desde Lovable.
+
+Las variables de entorno del servidor incluyen `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` y `SUPABASE_SERVICE_ROLE_KEY`. La clave de servicio nunca debe llevar prefijo `VITE_` ni exponerse al navegador.

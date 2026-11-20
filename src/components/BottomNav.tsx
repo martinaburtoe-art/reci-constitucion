@@ -3,7 +3,7 @@ import { Map, PlusCircle, User, CalendarDays, Flag } from "lucide-react";
 
 const items = [
   { to: "/", label: "Mapa", Icon: Map },
-  { to: "/registrar", label: "Reciclar", Icon: PlusCircle },
+  { to: "/reciclar", label: "Reciclar", Icon: PlusCircle },
   { to: "/calendario", label: "Calendario", Icon: CalendarDays },
   { to: "/denunciar", label: "Denunciar", Icon: Flag },
   { to: "/perfil", label: "Perfil", Icon: User },

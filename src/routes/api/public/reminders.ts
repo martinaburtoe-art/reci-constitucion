@@ -1,7 +1,9 @@
-import {createFileRoute} from '@tanstack/react-router';
-import {authenticateCronRequest} from '@/integrations/supabase/cron-auth';
-import {streak} from '@/lib/features';
-export const Route=createFileRoute('/api/public/reminders')({server:{handlers:{POST:async({request})=>{
+import { createFileRoute } from '@tanstack/react-router';
+import { authenticateCronRequest } from '@/integrations/supabase/cron-auth';
+import { streak } from '@/lib/features';
+
+async function handleReminders(request: Request): Promise<Response> {
+
  const failure=await authenticateCronRequest(request);if(failure)return failure;
  const {supabaseAdmin}=await import('@/integrations/supabase/client.server');
  const {allowedPushEndpoint,vapidKeys}=await import('@/lib/push.server');
@@ -21,4 +23,14 @@ export const Route=createFileRoute('/api/public/reminders')({server:{handlers:{P
  for(const message of messages){const claim=await supabaseAdmin.from('push_deliveries').insert({subscription_id:sub.id,event_key:message.key});if(claim.error)continue;try{const subscription=sub.subscription as unknown as import('@block65/webcrypto-web-push').PushSubscription;const payload=await buildPushPayload({data:JSON.stringify({title:'ReciConti',body:message.text,url:message.url}),options:{ttl:3600}},subscription,{subject:new URL(request.url).origin,publicKey:keys.public_key,privateKey:privateKey.d});const result=await fetch(sub.endpoint,{...payload,redirect:'error'});if(result.status===404||result.status===410)await supabaseAdmin.from('push_subscriptions').delete().eq('id',sub.id);else if(result.ok)sent++;}catch{ /* one attempt per scheduled event, no retry storm */ }}
  }
  return Response.json({sent});
-}}}});
+
+}
+
+export const Route = createFileRoute('/api/public/reminders')({
+  server: {
+    handlers: {
+      GET: ({ request }) => handleReminders(request),
+      POST: ({ request }) => handleReminders(request),
+    },
+  },
+});

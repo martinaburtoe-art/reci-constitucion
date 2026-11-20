@@ -1,5 +1,5 @@
 import {createFileRoute,Link} from '@tanstack/react-router';
-import {useState} from 'react';
+import {useEffect,useState} from 'react';
 import {supabase} from '@/integrations/supabase/client';
 import {Page} from '@/components/Page';
 import {Button} from '@/components/ui/button';
