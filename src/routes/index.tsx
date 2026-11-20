@@ -40,6 +40,40 @@ const LOCAL_RECYCLING_SERVICES = [
   },
 ] as const;
 
+// Ubicaciones de referencia publicadas mientras se completa la verificación en terreno.
+// Las coordenadas corresponden al centro aproximado de cada calle, NO a una puerta o acceso confirmado.
+const LOCAL_MAP_POINTS: PointLite[] = [
+  {
+    id: "local-desafio-verde",
+    nombre: "Desafío Verde · ubicación aproximada",
+    direccion: "Av. Santa María 470, Constitución",
+    lat: -35.33620,
+    lng: -72.41460,
+    horario: "Lunes a viernes: 09:00–12:00 y 15:00–18:00 (confirmar)",
+    estado: "activo",
+    nivel_llenado: 0,
+    verificado: false,
+    materiales: [],
+    fuente: "https://desafioverde.cl/ · coordenada aproximada del sector",
+    operador: "Desafío Verde",
+    telefono: "+56 2 2710 0739",
+  },
+  {
+    id: "local-conti-recicla",
+    nombre: "Conti Recicla · ubicación aproximada",
+    direccion: "Calle Río Santa Ana, Constitución (sin número confirmado)",
+    lat: -35.33294,
+    lng: -72.43244,
+    horario: "Horario no publicado; coordinar antes de acudir",
+    estado: "activo",
+    nivel_llenado: 0,
+    verificado: false,
+    materiales: [],
+    fuente: "Ficha pública de ubicación · coordenada aproximada del centro de calle",
+    operador: "Conti Recicla",
+    telefono: "+56 9 8886 2125",
+  },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -72,7 +106,8 @@ function Index() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string | null>(null);
   const [sel, setSel] = useState<PointLite | null>(null);
-  const shown = useMemo(() => points.filter(p => (!filter || p.materiales.includes(filter)) && `${p.nombre} ${p.direccion ?? ""}`.toLowerCase().includes(search.toLowerCase())), [points, filter, search]);
+  const allPoints = useMemo(() => [...LOCAL_MAP_POINTS, ...points], [points]);
+  const shown = useMemo(() => allPoints.filter(p => (!filter || p.materiales.includes(filter)) && `${p.nombre} ${p.direccion ?? ""}`.toLowerCase().includes(search.toLowerCase())), [allPoints, filter, search]);
   const onSelect = useCallback((p: PointLite) => setSel(p), []);
   const matName = (id: string) => materials.find((m) => m.id === id)?.nombre ?? id;
 
