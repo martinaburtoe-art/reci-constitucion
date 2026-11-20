@@ -98,7 +98,7 @@ async function fetchPoints(): Promise<PointLite[]> {
 }
 
 function Index() {
-  const { data: points = [], isError: pointsError } = useQuery({ queryKey: ["points"], queryFn: fetchPoints });
+  const { data: points = [] } = useQuery({ queryKey: ["points"], queryFn: fetchPoints });
   const { data: materials = [] } = useQuery({
     queryKey: ["materials"],
     queryFn: async () => (await supabase.from("materials").select("id,nombre,color").order("orden")).data ?? [],
@@ -107,7 +107,7 @@ function Index() {
   const [filter, setFilter] = useState<string | null>(null);
   const [sel, setSel] = useState<PointLite | null>(null);
   const allPoints = useMemo(() => [...LOCAL_MAP_POINTS, ...points], [points]);
-  const shown = useMemo(() => allPoints.filter(p => (!filter || p.materiales.includes(filter)) && `${p.nombre} ${p.direccion ?? ""}`.toLowerCase().includes(search.toLowerCase())), [allPoints, filter, search]);
+  const shown = useMemo(() => allPoints.filter(p => (p.id.startsWith("local-") || !filter || p.materiales.includes(filter)) && `${p.nombre} ${p.direccion ?? ""}`.toLowerCase().includes(search.toLowerCase())), [allPoints, filter, search]);
   const onSelect = useCallback((p: PointLite) => setSel(p), []);
   const matName = (id: string) => materials.find((m) => m.id === id)?.nombre ?? id;
 
