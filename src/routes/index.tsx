@@ -11,6 +11,36 @@ import { X, Clock, MapPin } from "lucide-react";
 
 const PointsMap = lazy(() => import("@/components/PointsMap"));
 
+const LOCAL_RECYCLING_SERVICES = [
+  {
+    id: "desafio-verde",
+    name: "Desafío Verde",
+    kind: "Centro de reciclaje y retiro domiciliario",
+    address: "Av. Santa María 470, Constitución",
+    hours: "Lunes a viernes: 09:00–12:00 y 15:00–18:00",
+    phone: "+56 2 2710 0739",
+    materials: "Vidrio, botellas plásticas, papel, cartón y latas (confirmar aceptación antes de llevar).",
+    source: "https://desafioverde.cl/",
+    sourceLabel: "Sitio oficial",
+    mapsQuery: "Desafío Verde, Avenida Santa María 470, Constitución, Chile",
+    note: "La organización también ofrece retiros programados por sectores. Consulta disponibilidad y materiales antes de acudir.",
+  },
+  {
+    id: "conti-recicla",
+    name: "Conti Recicla",
+    kind: "Gestor / iniciativa local de reciclaje",
+    address: "Calle Río Santa Ana, Constitución",
+    hours: "Horario de recepción no publicado; coordinar previamente.",
+    phone: "+56 9 8886 2125",
+    materials: "Se reportan operativos con vidrio, botellas plásticas, latas y cartón; confirmar recepción actual.",
+    source: "https://www.google.com/maps/search/?api=1&query=Conti+Recicla+Constitucion+Maule",
+    sourceLabel: "Ficha y ubicación",
+    mapsQuery: "Conti Recicla, Calle Río Santa Ana, Constitución, Chile",
+    note: "La dirección publicada es referencial y no identifica un número de calle. Llama antes de desplazarte.",
+  },
+] as const;
+
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -78,6 +108,37 @@ function Index() {
           <p className="mt-1 text-sm text-muted-foreground">Todavía no hay puntos de reciclaje confirmados para publicar en el mapa. Preferimos verificar la información antes de enviarte a una ubicación incorrecta.</p>
         </div>
       ) : null}
+
+      <section aria-label="Directorio local de reciclaje" className="absolute inset-x-3 bottom-[4.7rem] z-[900] mx-auto max-w-md max-h-[38dvh] overflow-y-auto rounded-2xl border bg-card/95 p-3 shadow-float backdrop-blur">
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <div>
+            <h2 className="font-display text-base font-bold">Dónde reciclar en Constitución</h2>
+            <p className="text-xs text-muted-foreground">Lugares y gestores locales · confirma antes de ir</p>
+          </div>
+          <span className="shrink-0 rounded-full bg-secondary px-2 py-1 text-[10px] font-semibold">2 referencias</span>
+        </div>
+        <div className="space-y-2">
+          {LOCAL_RECYCLING_SERVICES.map((service) => (
+            <article key={service.id} className="rounded-xl border bg-background/80 p-3">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <h3 className="text-sm font-semibold">{service.name}</h3>
+                  <p className="text-[11px] text-muted-foreground">{service.kind}</p>
+                </div>
+                <a className="shrink-0 text-xs font-semibold text-primary underline" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(service.mapsQuery)}`} target="_blank" rel="noreferrer">Cómo llegar</a>
+              </div>
+              <p className="mt-1 text-xs">{service.address}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{service.hours}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{service.materials}</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">{service.note}</p>
+              <div className="mt-2 flex items-center gap-3 text-xs">
+                <a className="font-medium text-primary underline" href={`tel:${service.phone.replace(/[^+0-9]/g, "")}`}>{service.phone}</a>
+                <a className="font-medium text-primary underline" href={service.source} target="_blank" rel="noreferrer">{service.sourceLabel}</a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
       {sel && (
         <div className="absolute inset-x-0 bottom-16 max-h-[65dvh] overflow-y-auto z-[1000] p-3">
